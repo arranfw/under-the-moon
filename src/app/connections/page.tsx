@@ -27,7 +27,7 @@ const difficultyColor = (difficulty: 1 | 2 | 3 | 4): string => {
     1: "#fbd400",
     2: "#b5e352",
     3: "#729eeb",
-    4: "#bc70c4"
+    4: "#bc70c4",
   }[difficulty];
 };
 
@@ -37,7 +37,7 @@ const useGame = (options: Options) => {
     complete: [],
     items: shuffle(options.groups.flatMap((g) => g.items)),
     activeItems: [],
-    mistakesRemaining: 3
+    mistakesRemaining: 3,
   };
   const [game, setGame] = useState(initialState);
 
@@ -45,12 +45,12 @@ const useGame = (options: Options) => {
     if (game.activeItems.includes(item)) {
       setGame((prev) => ({
         ...game,
-        activeItems: prev.activeItems.filter((i) => i !== item)
+        activeItems: prev.activeItems.filter((i) => i !== item),
       }));
     } else if (game.activeItems.length < 4) {
       setGame((prev) => ({
         ...game,
-        activeItems: [...prev.activeItems, item]
+        activeItems: [...prev.activeItems, item],
       }));
     }
   };
@@ -58,33 +58,33 @@ const useGame = (options: Options) => {
   const shuffleGame = () => {
     setGame((prev) => ({
       ...game,
-      items: shuffle(game.items)
+      items: shuffle(game.items),
     }));
   };
 
   const deselectAll = () => {
     setGame((prev) => ({
       ...game,
-      activeItems: []
+      activeItems: [],
     }));
   };
 
   const submit = () => {
     const foundGroup = game.incomplete.find((group) =>
-      group.items.every((item) => game.activeItems.includes(item))
+      group.items.every((item) => game.activeItems.includes(item)),
     );
 
     if (foundGroup) {
       // game.complete.push(foundGroup);
       const incomplete = game.incomplete.filter(
-        (group) => group !== foundGroup
+        (group) => group !== foundGroup,
       );
       setGame((prev) => ({
         ...game,
         complete: [...prev.complete, foundGroup],
         incomplete: [...incomplete],
         items: incomplete.flatMap((group) => group.items),
-        activeItems: []
+        activeItems: [],
       }));
       // game.incomplete = incomplete;
       // game.items = incomplete.flatMap((group) => group.items);
@@ -93,7 +93,7 @@ const useGame = (options: Options) => {
       setGame((prev) => ({
         ...game,
         mistakesRemaining: prev.mistakesRemaining - 1,
-        activeItems: []
+        activeItems: [],
       }));
       // game.mistakesRemaining -= 1;
       // game.activeItems = [];
@@ -104,7 +104,7 @@ const useGame = (options: Options) => {
           complete: [...prev.incomplete],
           incomplete: [],
           items: [],
-          activeItems: []
+          activeItems: [],
         }));
         // game.complete = [...game.incomplete];
         // game.incomplete = [];
@@ -118,13 +118,13 @@ const useGame = (options: Options) => {
     shuffleGame,
     deselectAll,
     submit,
-    game
+    game,
   };
 };
 
 const Connections = () => {
   const { game, deselectAll, shuffleGame, submit, toggleActive } = useGame({
-    groups: DAY_1
+    groups: DAY_1,
   });
 
   return (
@@ -143,13 +143,15 @@ const Connections = () => {
 
             {chunk(game.items, 4).map((row) => (
               <>
-                <div>
+                <div className="grid grid-cols-4">
                   {row.map((item) => (
                     <button
                       onClick={() => toggleActive(item)}
                       className={cn("border", {
-                        "bg-white": game.activeItems.includes(item),
-                        "bg-gray-300": !game.activeItems.includes(item)
+                        "bg-connections-button":
+                          !game.activeItems.includes(item),
+                        "bg-connections-button-active":
+                          game.activeItems.includes(item),
                       })}
                     >
                       {item}
