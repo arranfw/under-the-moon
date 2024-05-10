@@ -1,5 +1,7 @@
 "use client";
 
+import { ConnectionsActionButton } from "@/components/ConnectionsActionButton";
+import { ConnectionsItem } from "@/components/ConnectionsItem";
 import { useState } from "react";
 import { chunk, cn, shuffle } from "../util";
 import { DAY_1 } from "./constants";
@@ -39,6 +41,7 @@ const useGame = (options: Options) => {
     activeItems: [],
     mistakesRemaining: 3,
   };
+
   const [game, setGame] = useState(initialState);
 
   const toggleActive = (item: string) => {
@@ -75,7 +78,6 @@ const useGame = (options: Options) => {
     );
 
     if (foundGroup) {
-      // game.complete.push(foundGroup);
       const incomplete = game.incomplete.filter(
         (group) => group !== foundGroup,
       );
@@ -86,18 +88,12 @@ const useGame = (options: Options) => {
         items: incomplete.flatMap((group) => group.items),
         activeItems: [],
       }));
-      // game.incomplete = incomplete;
-      // game.items = incomplete.flatMap((group) => group.items);
-      // game.activeItems = [];
     } else {
       setGame((prev) => ({
         ...game,
         mistakesRemaining: prev.mistakesRemaining - 1,
         activeItems: [],
       }));
-      // game.mistakesRemaining -= 1;
-      // game.activeItems = [];
-
       if (game.mistakesRemaining === 0) {
         setGame((prev) => ({
           ...game,
@@ -106,9 +102,6 @@ const useGame = (options: Options) => {
           items: [],
           activeItems: [],
         }));
-        // game.complete = [...game.incomplete];
-        // game.incomplete = [];
-        // game.items = [];
       }
     }
   };
@@ -129,50 +122,73 @@ const Connections = () => {
 
   return (
     <div className="h-full bg-white">
-      <div>
-        <div>
-          <h1>Connections</h1>
-          <p>Create four groups of four!</p>
+      <div className="flex justify-center">
+        <div className="w-96 ">
+          <h1 className="text-4xl mb-4">Connections</h1>
+          <p className="w-full text-center mb-4">Create four groups of four!</p>
           <div>
             {game.complete.map((group) => (
-              <div>
-                <p>{group.category}</p>
+              <div
+                className={cn(
+                  `w-full flex flex-col justify-center items-center mb-2 rounded-md color-black  tracking-wider uppercase h-20`,
+                  {
+                    "bg-connections-difficulty-1": group.difficulty === 1,
+                    "bg-connections-difficulty-2": group.difficulty === 2,
+                    "bg-connections-difficulty-3": group.difficulty === 3,
+                    "bg-connections-difficulty-4": group.difficulty === 4,
+                  },
+                )}
+              >
+                <p className="font-bold">{group.category}</p>
                 <p>{group.items.join(", ")}</p>
               </div>
             ))}
 
-            {chunk(game.items, 4).map((row) => (
-              <>
-                <div className="grid grid-cols-4">
+            <div className="grid grid-cols-4 gap-2 mb-4">
+              {chunk(game.items, 4).map((row) => (
+                <>
                   {row.map((item) => (
-                    <button
+                    <ConnectionsItem
                       onClick={() => toggleActive(item)}
-                      className={cn("border", {
-                        "bg-connections-button":
-                          !game.activeItems.includes(item),
-                        "bg-connections-button-active":
-                          game.activeItems.includes(item),
-                      })}
+                      active={game.activeItems.includes(item)}
                     >
                       {item}
-                    </button>
+                    </ConnectionsItem>
                   ))}
-                </div>
-              </>
-            ))}
+                </>
+              ))}
+            </div>
           </div>
-          <div>
-            <p>Mistakes remaining:</p>
-            {[...Array(game.mistakesRemaining).keys()].map(() => (
-              <div className="rounded-full" />
-            ))}
+          <div className="w-full flex justify-center mb-4">
+            <div className="flex items-center gap-2">
+              <p>Mistakes remaining:</p>{" "}
+              <div className="flex gap-2">
+                {Array(4)
+                  .fill("")
+                  .map((_, i) => (
+                    <div
+                      className={cn("rounded-full w-4 h-4", {
+                        "bg-connections-button-active":
+                          i <= game.mistakesRemaining,
+                      })}
+                    />
+                  ))}
+              </div>
+            </div>
           </div>
-          <div>
-            <button onClick={shuffleGame}>Shuffle</button>
-            <button onClick={deselectAll}>Deselect All</button>
-            <button disabled={game.activeItems.length !== 4} onClick={submit}>
+          <div className="w-full flex justify-center gap-2">
+            <ConnectionsActionButton onClick={shuffleGame}>
+              Shuffle
+            </ConnectionsActionButton>
+            <ConnectionsActionButton onClick={deselectAll}>
+              Deselect All
+            </ConnectionsActionButton>
+            <ConnectionsActionButton
+              disabled={game.activeItems.length !== 4}
+              onClick={submit}
+            >
               Submit
-            </button>
+            </ConnectionsActionButton>
           </div>
         </div>
       </div>

@@ -16,6 +16,10 @@ const config: Config = {
       backgroundColor: {
         "connections-button": "rgb(239, 239, 230)",
         "connections-button-active": "rgb(90, 89, 78)",
+        "connections-difficulty-1": "rgb(249, 223, 109)",
+        "connections-difficulty-2": "rgb(160, 195, 90)",
+        "connections-difficulty-3": "rgb(176, 196, 239)",
+        "connections-difficulty-4": "rgb(186, 129, 197)",
       },
       colors: {
         "connections-button": "rgb(0, 0, 0)",
