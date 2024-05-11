@@ -1,4 +1,4 @@
-import { cn } from "@/app/util";
+import { cn } from "@/util";
 import React from "react";
 
 interface ConnectionsActionButton extends React.PropsWithChildren {

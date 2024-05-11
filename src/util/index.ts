@@ -8,6 +8,6 @@ export const chunk = <T>(list: T[], size: number): T[][] => {
 };
 
 export const shuffle = <T>(list: T[]): T[] => {
-  // return list.sort(() => 0.5 - Math.random());
-  return list;
+  return list.sort(() => 0.5 - Math.random());
+  // return list;
 };

@@ -1,4 +1,4 @@
-import { cn } from "@/app/util";
+import { cn } from "@/util";
 import React, { useEffect } from "react";
 
 interface ConnectionsItemProps extends React.PropsWithChildren {
