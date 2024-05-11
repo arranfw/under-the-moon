@@ -21,8 +21,10 @@ export const ConnectionsItem: React.FC<ConnectionsItemProps> = ({
         {
           "bg-connections-button": !active,
           "text-connections-button": !active,
+          "scale-100": !active,
           "bg-connections-button-active": active,
           "text-connections-button-active": active,
+          "scale-105": active,
         },
       )}
     >

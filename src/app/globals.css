@@ -31,3 +31,9 @@ body {
     text-wrap: balance;
   }
 }
+
+button {
+  transition: color 75ms ease-in-out,
+    background-color 75ms ease-in-out,
+    transform 75ms ease-in-out;
+}

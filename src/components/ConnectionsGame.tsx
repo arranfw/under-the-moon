@@ -41,6 +41,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
         <div className="grid grid-cols-4 gap-2 mb-4">
           {game.items.map((item) => (
             <ConnectionsItem
+              key={item}
               onClick={() => toggleActive(item)}
               active={game.activeItems.includes(item)}
             >
@@ -57,6 +58,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
               .fill("")
               .map((_, i) => (
                 <div
+                  key={i}
                   className={cn("rounded-full w-4 h-4", {
                     "bg-connections-button-active": i <= game.mistakesRemaining,
                   })}
@@ -69,12 +71,15 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
         <ConnectionsActionButton onClick={shuffleGame}>
           Shuffle
         </ConnectionsActionButton>
-        <ConnectionsActionButton onClick={deselectAll}>
+        <ConnectionsActionButton
+          onClick={deselectAll}
+          disabled={game.activeItems.length < 1}
+        >
           Deselect All
         </ConnectionsActionButton>
         <ConnectionsActionButton
-          disabled={game.activeItems.length !== 4}
           onClick={submit}
+          disabled={game.activeItems.length !== 4}
         >
           Submit
         </ConnectionsActionButton>
