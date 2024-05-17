@@ -2,29 +2,58 @@
 
 import { useGame } from "@/app/connections/useGame";
 import { chunk, cn } from "@/util";
-import { connectionsDataToGameState } from "@/util/api/connections";
-import React from "react";
+import {
+  ConnectionsData,
+  connectionsDataToGameState,
+} from "@/util/api/connections";
+import { LocalDate } from "@js-joda/core";
+import React, { useState } from "react";
 import { ConnectionsActionButton } from "./ConnectionsActionButton";
 import { ConnectionsItem } from "./ConnectionsItem";
 
 interface ConnectionsGameProps {
-  gameData: any;
+  gameData: ConnectionsData;
 }
 
 export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
   gameData,
 }) => {
-  const { game, deselectAll, shuffleGame, submit, toggleActive } = useGame({
-    groups: connectionsDataToGameState(gameData),
-  });
+  const date = React.useMemo(
+    () => LocalDate.parse(gameData.print_date),
+    [gameData.print_date],
+  );
+
+  const { game, deselectAll, shuffleGame, submit, foundGroup, toggleActive } =
+    useGame({
+      groups: connectionsDataToGameState(gameData),
+      date,
+    });
+
+  const [jigglingIncorrect, setJigglingIncorrect] = useState<string[]>([]);
+
+  const handleSubmit = () => {
+    const currentGuess = [...game.activeItems];
+    if (!foundGroup) {
+      setJigglingIncorrect(currentGuess);
+      setTimeout(() => {
+        setJigglingIncorrect([]);
+        submit();
+      }, 1000);
+    } else {
+      submit();
+    }
+  };
 
   return (
     <>
       <div>
         {game.complete.map((group) => (
           <div
+            key={group.title}
             className={cn(
-              `w-full flex flex-col justify-center items-center mb-2 rounded-md color-black  tracking-wider uppercase h-20`,
+              `w-full flex flex-col justify-center items-center
+              mb-2 rounded-md color-black tracking-wider uppercase h-20
+              text-black`,
               {
                 "bg-connections-difficulty-1": group.difficulty === 1,
                 "bg-connections-difficulty-2": group.difficulty === 2,
@@ -44,6 +73,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
               key={item}
               onClick={() => toggleActive(item)}
               active={game.activeItems.includes(item)}
+              jiggle={jigglingIncorrect.includes(item)}
             >
               {item}
             </ConnectionsItem>
@@ -60,7 +90,8 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
                 <div
                   key={i}
                   className={cn("rounded-full w-4 h-4", {
-                    "bg-connections-button-active": i <= game.mistakesRemaining,
+                    "bg-connections-button-active dark:bg-white":
+                      i <= game.mistakesRemaining,
                   })}
                 />
               ))}
@@ -78,7 +109,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
           Deselect All
         </ConnectionsActionButton>
         <ConnectionsActionButton
-          onClick={submit}
+          onClick={handleSubmit}
           disabled={game.activeItems.length !== 4}
         >
           Submit

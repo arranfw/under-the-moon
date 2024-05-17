@@ -26,6 +26,16 @@ const config: Config = {
         "connections-button-active": "rgb(255, 255, 255)",
       },
     },
+    animation: {
+      wiggle: "wiggle .25s ease-in-out infinite",
+    },
+    keyframes: {
+      wiggle: {
+        "0%, 100%": { transform: "translateX(0px)" },
+        "33%": { transform: "translateX(4px)" },
+        "77%": { transform: "translateX(-4px)" },
+      },
+    },
   },
   plugins: [],
 };

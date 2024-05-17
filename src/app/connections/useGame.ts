@@ -1,9 +1,11 @@
 import { shuffle } from "@/util";
 import { Category } from "@/util/api/connections";
-import { useState } from "react";
+import { LocalDate } from "@js-joda/core";
+import { useEffect, useState } from "react";
 
 type Options = {
   groups: Category[];
+  date: LocalDate;
 };
 
 export type GameState = {
@@ -14,19 +16,23 @@ export type GameState = {
   mistakesRemaining: number;
 };
 
-export const useGame = (options: Options) => {
-  const initialState: GameState = {
-    incomplete: options.groups,
-    complete: [],
-    items: options.groups
-      .flatMap((g) => g.cards)
-      .sort((a, b) => a.position - b.position)
-      .map((c) => c.content),
-    activeItems: [],
-    mistakesRemaining: 3,
-  };
+const initialState = (groups: Options["groups"]): GameState => ({
+  incomplete: groups,
+  complete: [],
+  items: [...groups]
+    .flatMap((g) => g.cards)
+    .sort((a, b) => a.position - b.position)
+    .map((c) => c.content),
+  activeItems: [],
+  mistakesRemaining: 3,
+});
 
-  const [game, setGame] = useState(initialState);
+export const useGame = (options: Options) => {
+  const [game, setGame] = useState(initialState(options.groups));
+
+  useEffect(() => {
+    setGame(initialState(options.groups));
+  }, [options.date]);
 
   const toggleActive = (item: string) => {
     if (game.activeItems.includes(item)) {
@@ -56,11 +62,11 @@ export const useGame = (options: Options) => {
     }));
   };
 
-  const submit = () => {
-    const foundGroup = game.incomplete.find((group) =>
-      group.cards.every((item) => game.activeItems.includes(item.content)),
-    );
+  const foundGroup = game.incomplete.find((group) =>
+    group.cards.every((item) => game.activeItems.includes(item.content)),
+  );
 
+  const submit = () => {
     if (foundGroup) {
       const incomplete = game.incomplete.filter(
         (group) => group !== foundGroup,
@@ -74,6 +80,7 @@ export const useGame = (options: Options) => {
         ),
         activeItems: [],
       }));
+      return true;
     } else {
       setGame((prev) => ({
         ...game,
@@ -89,10 +96,12 @@ export const useGame = (options: Options) => {
           activeItems: [],
         }));
       }
+      return false;
     }
   };
 
   return {
+    foundGroup,
     toggleActive,
     shuffleGame,
     deselectAll,

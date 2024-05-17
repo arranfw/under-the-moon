@@ -1,33 +1,47 @@
+import { ConnectionsDateNavLink } from "@/components/ConnectionsDateNavLink";
 import { ConnectionsGame } from "@/components/ConnectionsGame";
 import { getConnectionsData } from "@/util/api/connections";
-import { LocalDate } from "js-joda";
+import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import { DateTimeFormatter, LocalDate } from "@js-joda/core";
+import "@js-joda/locale_en";
+import { Locale } from "@js-joda/locale_en";
 
-const difficultyColor = (difficulty: 1 | 2 | 3 | 4): string => {
-  return {
-    1: "#fbd400",
-    2: "#b5e352",
-    3: "#729eeb",
-    4: "#bc70c4",
-  }[difficulty];
-};
+const dateFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy").withLocale(
+  Locale.ENGLISH,
+);
 
-const Connections = async () => {
-  const today = LocalDate.now();
-  const data = await getConnectionsData(today);
+const Connections = async ({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) => {
+  const date =
+    typeof searchParams.date === "string"
+      ? LocalDate.parse(searchParams.date)
+      : LocalDate.now();
+  const data = await getConnectionsData(date);
+  const todayString = date.format(dateFormatter);
 
   return (
-    <div className="h-full">
-      <div className="flex justify-center">
-        <div className="w-96">
-          <div className="flex items-center flex-col">
-            <h1 className="text-4xl mb-2 font-bold">Connections</h1>
-            <p className="w-full text-center mb-4">
-              Create four groups of four!
-            </p>
-          </div>
-          <ConnectionsGame gameData={data} />
+    <div className="h-full w-96 flex flex-col m-auto">
+      <div className="flex items-center flex-col gap-6 mb-6">
+        <div className="flex items-end gap-2">
+          <h1 className="text-4xl font-bold">Connections</h1>
         </div>
+        <div className="flex w-full justify-between items-center">
+          <ConnectionsDateNavLink
+            href={`/connections?date=${date.minusDays(1).toJSON()}`}
+            icon={faAngleLeft}
+          />
+          <p className="text-lg">{todayString}</p>
+          <ConnectionsDateNavLink
+            href={`/connections?date=${date.plusDays(1).toJSON()}`}
+            icon={faAngleRight}
+          />
+        </div>
+        <p>Create four groups of four!</p>
       </div>
+      <ConnectionsGame gameData={data} />
     </div>
   );
 };

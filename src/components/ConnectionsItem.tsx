@@ -5,12 +5,14 @@ interface ConnectionsItemProps extends React.PropsWithChildren {
   onClick: () => void;
   active?: boolean;
   disabled?: boolean;
+  jiggle?: boolean;
 }
 
 export const ConnectionsItem: React.FC<ConnectionsItemProps> = ({
   children,
   onClick,
   active,
+  jiggle,
 }) => {
   return (
     <button
@@ -22,6 +24,7 @@ export const ConnectionsItem: React.FC<ConnectionsItemProps> = ({
         "bg-connections-button-active": active,
         "text-connections-button-active": active,
         "scale-105": active,
+        "animate-wiggle": jiggle,
       })}
     >
       {children}
