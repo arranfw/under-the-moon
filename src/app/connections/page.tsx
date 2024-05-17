@@ -16,11 +16,15 @@ const Connections = async () => {
   const data = await getConnectionsData(today);
 
   return (
-    <div className="h-full bg-white">
+    <div className="h-full">
       <div className="flex justify-center">
-        <div className="w-96 ">
-          <h1 className="text-4xl mb-4">Connections</h1>
-          <p className="w-full text-center mb-4">Create four groups of four!</p>
+        <div className="w-96">
+          <div className="flex items-center flex-col">
+            <h1 className="text-4xl mb-2 font-bold">Connections</h1>
+            <p className="w-full text-center mb-4">
+              Create four groups of four!
+            </p>
+          </div>
           <ConnectionsGame gameData={data} />
         </div>
       </div>
