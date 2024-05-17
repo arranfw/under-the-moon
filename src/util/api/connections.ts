@@ -11,7 +11,7 @@ export interface Category {
   difficulty?: number;
 }
 
-export interface ConnectionsData {
+export interface ConnectionsGameData {
   status: string;
   id: number;
   print_date: string;
@@ -21,7 +21,7 @@ export interface ConnectionsData {
 
 export const getConnectionsData = async (
   date: LocalDate,
-): Promise<ConnectionsData> => {
+): Promise<ConnectionsGameData> => {
   const res = await fetch(
     `https://www.nytimes.com/svc/connections/v2/${date.toJSON()}.json`,
   );
@@ -29,7 +29,7 @@ export const getConnectionsData = async (
     throw new Error("Failed to fetch data");
   }
 
-  const data: ConnectionsData = await res.json();
+  const data: ConnectionsGameData = await res.json();
 
   return {
     ...data,
@@ -41,7 +41,7 @@ export const getConnectionsData = async (
 };
 
 export const connectionsDataToGameState = (
-  connectionsData: ConnectionsData,
+  connectionsData: ConnectionsGameData,
 ): Category[] => {
   return connectionsData.categories.map((category, i) => ({
     title: category.title,

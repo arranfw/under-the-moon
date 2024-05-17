@@ -1,33 +1,52 @@
 import { cn } from "@/util";
-import React, { useEffect } from "react";
+import React from "react";
 
-interface ConnectionsItemProps extends React.PropsWithChildren {
-  onClick: () => void;
-  active?: boolean;
-  disabled?: boolean;
+interface ConnectionsItemProps {
+  onClick: (label: string) => void;
+  col: number;
+  row: number;
+  label: string;
+  selected?: boolean;
+  completed?: boolean;
   jiggle?: boolean;
 }
 
 export const ConnectionsItem: React.FC<ConnectionsItemProps> = ({
-  children,
+  col,
+  row,
+  label,
   onClick,
-  active,
+  selected,
+  completed,
   jiggle,
 }) => {
   return (
-    <button
-      onClick={onClick}
-      className={cn("rounded-md uppercase text-xs font-bold select-none h-20", {
-        "bg-stone-200 dark:bg-gray-800": !active,
-        "text-black dark:text-gray-300": !active,
-        "scale-100": !active,
-        "bg-connections-button-active": active,
-        "text-connections-button-active": active,
-        "scale-105": active,
-        "animate-wiggle": jiggle,
-      })}
+    <div
+      className={cn(
+        "p-1 box-border transition-all duration-700",
+        `absolute w-[25%] h-[25%]`,
+        `top-[${(row * 25).toFixed(0)}%] left-[${(col * 25).toFixed(0)}%]`,
+      )}
     >
-      {children}
-    </button>
+      <button
+        onClick={() => onClick(label)}
+        className={cn(
+          "w-full h-full grid place-content-center z-0",
+          "rounded-md uppercase text-xs font-bold select-none",
+          {
+            "bg-stone-200 dark:bg-gray-800": !selected,
+            "text-black dark:text-gray-300": !selected,
+            "scale-100": !selected,
+            "bg-connections-button-active": selected,
+            "text-connections-button-active": selected,
+            "scale-105": selected,
+            "animate-wiggle": jiggle,
+            "cursor-default": completed,
+          },
+        )}
+      >
+        {label}
+      </button>
+    </div>
   );
 };

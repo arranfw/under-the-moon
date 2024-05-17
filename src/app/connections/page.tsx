@@ -1,10 +1,10 @@
 import { ConnectionsDateNavLink } from "@/components/ConnectionsDateNavLink";
-import { ConnectionsGame } from "@/components/ConnectionsGame";
 import { getConnectionsData } from "@/util/api/connections";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { DateTimeFormatter, LocalDate } from "@js-joda/core";
 import "@js-joda/locale_en";
 import { Locale } from "@js-joda/locale_en";
+import { ConnectionsGame } from "../../components/ConnectionsGame";
 
 const dateFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy").withLocale(
   Locale.ENGLISH,
