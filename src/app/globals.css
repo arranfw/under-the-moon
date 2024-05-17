@@ -30,5 +30,6 @@ body {
 button {
   transition: color 75ms ease-in-out,
     background-color 75ms ease-in-out,
+    opacity 250ms ease-in-out 250ms,
     transform 75ms ease-in-out;
 }

@@ -20,6 +20,7 @@ const Connections = async ({
       ? LocalDate.parse(searchParams.date)
       : LocalDate.now();
   const data = await getConnectionsData(date);
+
   const todayString = date.format(dateFormatter);
 
   return (

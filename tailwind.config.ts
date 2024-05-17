@@ -30,6 +30,10 @@ const config: Config = {
         "connections-difficulty-2": "rgb(160, 195, 90)",
         "connections-difficulty-3": "rgb(176, 196, 239)",
         "connections-difficulty-4": "rgb(186, 129, 197)",
+        "connections-difficulty-1-dark": "rgb(143, 120, 19)",
+        "connections-difficulty-2-dark": "rgb(85, 122, 11)",
+        "connections-difficulty-3-dark": "rgb(18, 37, 77)",
+        "connections-difficulty-4-dark": "rgb(77, 14, 89)",
       },
       colors: {
         "connections-button": "rgb(0, 0, 0)",
@@ -50,12 +54,22 @@ const config: Config = {
     },
     animation: {
       wiggle: "wiggle .25s ease-in-out infinite",
+      popIn: "popIn 500ms ease-in-out, fadeIn 500ms ease-in-out",
     },
     keyframes: {
       wiggle: {
         "0%, 100%": { transform: "translateX(0px)" },
         "33%": { transform: "translateX(4px)" },
         "77%": { transform: "translateX(-4px)" },
+      },
+      popIn: {
+        "0%": { transform: "scale(.8)" },
+        "50%": { transform: "scale(1.1)" },
+        "100%": { transform: "scale(1)" },
+      },
+      fadeIn: {
+        "0%": { opacity: "0" },
+        "100%": { opacity: "1" },
       },
     },
   },

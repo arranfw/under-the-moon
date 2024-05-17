@@ -8,7 +8,7 @@ export interface Card {
 export interface Category {
   title: string;
   cards: Card[];
-  difficulty: number;
+  difficulty?: number;
 }
 
 export interface ConnectionsData {
@@ -28,7 +28,16 @@ export const getConnectionsData = async (
   if (!res.ok) {
     throw new Error("Failed to fetch data");
   }
-  return res.json();
+
+  const data: ConnectionsData = await res.json();
+
+  return {
+    ...data,
+    categories: data.categories.map((category: any, i) => ({
+      ...category,
+      difficulty: i,
+    })),
+  };
 };
 
 export const connectionsDataToGameState = (
