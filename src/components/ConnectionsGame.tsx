@@ -18,16 +18,14 @@ interface ConnectionsGameProps {
 export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
   gameData,
 }) => {
-  const date = React.useMemo(
-    () => LocalDate.parse(gameData.print_date),
-    [gameData.print_date],
-  );
-
-  const { game, deselectAll, shuffleGame, submit, foundGroup, toggleActive } =
-    useGame({
+  const options = React.useMemo(
+    () => ({
       groups: connectionsDataToGameState(gameData),
-      date,
-    });
+    }),
+    [gameData],
+  );
+  const { game, deselectAll, shuffleGame, submit, foundGroup, toggleActive } =
+    useGame(options);
 
   const [jigglingIncorrect, setJigglingIncorrect] = useState<string[]>([]);
 

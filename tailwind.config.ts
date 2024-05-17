@@ -6,6 +6,16 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  safelist: [
+    "top-[0%]",
+    "top-[25%]",
+    "top-[50%]",
+    "top-[75%]",
+    "left-[0%]",
+    "left-[25%]",
+    "left-[50%]",
+    "left-[75%]",
+  ],
   theme: {
     extend: {
       backgroundImage: {
@@ -24,6 +34,18 @@ const config: Config = {
       colors: {
         "connections-button": "rgb(0, 0, 0)",
         "connections-button-active": "rgb(255, 255, 255)",
+      },
+      top: {
+        "20": "5rem",
+        "30": "7.5rem",
+        "40": "10rem",
+        "50": "12.5rem",
+      },
+      left: {
+        "20": "5rem",
+        "30": "7.5rem",
+        "40": "10rem",
+        "50": "12.5rem",
       },
     },
     animation: {

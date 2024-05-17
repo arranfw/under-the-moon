@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 
 type Options = {
   groups: Category[];
-  date: LocalDate;
 };
 
 export type GameState = {
@@ -32,7 +31,7 @@ export const useGame = (options: Options) => {
 
   useEffect(() => {
     setGame(initialState(options.groups));
-  }, [options.date]);
+  }, [options.groups]);
 
   const toggleActive = (item: string) => {
     if (game.activeItems.includes(item)) {
