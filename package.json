@@ -17,6 +17,7 @@
     "@js-joda/core": "^5.6.2",
     "@js-joda/locale_en": "^4.11.0",
     "@types/lodash": "^4.17.4",
+    "@uidotdev/usehooks": "^2.4.1",
     "clsx": "^2.1.1",
     "lodash": "^4.17.21",
     "next": "14.2.3",

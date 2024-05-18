@@ -1,12 +1,13 @@
 "use client";
 
 import { cn } from "@/util";
-import React, { SetStateAction, useEffect, useState } from "react";
+import React, { useState } from "react";
 import lodashShuffle from "lodash/shuffle";
 import { ConnectionsActionButton } from "@/components/ConnectionsActionButton";
-import { Category, ConnectionsGameData } from "@/util/api/connections";
+import { Category } from "@/util/api/connections";
 import { intersection } from "lodash";
 import { ConnectionsItem } from "./ConnectionsItem";
+import { useLocalStorage } from "@uidotdev/usehooks";
 
 interface GameState {
   selected: string[];
@@ -35,48 +36,18 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     grid: gameGrid,
   };
 
-  const [gameState, setGameState] = useState<GameState>(initialGameState);
-  const { completedGroups, correctGuesses, incorrectGuesses, selected, grid } =
-    gameState;
+  const [
+    { completedGroups, correctGuesses, incorrectGuesses, selected, grid },
+    setGameState,
+  ] = useLocalStorage<GameState>(
+    `connections-game-state-${date}`,
+    initialGameState,
+  );
   const numberOfCorrectGuesses = correctGuesses.length;
   const [jigglingItems, setJigglingItems] = useState<string[]>([]);
 
-  const updateGameState = (newState: SetStateAction<GameState>) => {
-    const newValue =
-      newState instanceof Function ? newState(gameState) : newState;
-
-    setGameState(newValue);
-    localStorage.setItem(
-      `connections-game-state-${date}`,
-      JSON.stringify(newValue),
-    );
-  };
-
-  useEffect(() => {
-    const savedState = localStorage.getItem(`connections-game-state-${date}`);
-    const restoreState = savedState ? JSON.parse(savedState) : initialGameState;
-
-    setGameState(() => ({
-      ...restoreState,
-      grid: restoreState.grid ? restoreState.grid : initialGameState.grid,
-    }));
-  }, [gameGrid, date]);
-
-  const promoteLabels = (labels: string[]) => {
-    updateGameState((prev) => ({
-      ...prev,
-      grid: [
-        ...correctGuesses,
-        ...labels,
-        ...prev.grid.filter(
-          (l) => !labels.includes(l) && !correctGuesses.includes(l),
-        ),
-      ],
-    }));
-  };
-
   const shuffle = () => {
-    updateGameState((prev) => ({
+    setGameState((prev) => ({
       ...prev,
       grid: [
         ...prev.grid.slice(0, numberOfCorrectGuesses),
@@ -98,7 +69,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     const currentGuess = [...selected];
     const isCorrect = isCorrectGuess();
     if (!isCorrect) {
-      updateGameState((prev) => ({
+      setGameState((prev) => ({
         ...prev,
         incorrectGuesses: [...prev.incorrectGuesses, currentGuess],
       }));
@@ -112,15 +83,23 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     if (currentGuess.length !== 4) {
       return;
     }
-    promoteLabels(currentGuess);
-    updateGameState((prev) => ({
+    const reorderedGrid = [
+      ...correctGuesses,
+      ...currentGuess,
+      ...grid.filter(
+        (l) => !currentGuess.includes(l) && !correctGuesses.includes(l),
+      ),
+    ];
+    setGameState((prev) => ({
       ...prev,
       selected: [],
       correctGuesses: [...prev.correctGuesses, ...currentGuess],
+      grid: reorderedGrid,
     }));
     setTimeout(() => {
-      updateGameState((prev) => ({
+      setGameState((prev) => ({
         ...prev,
+        grid: reorderedGrid,
         completedGroups: [
           ...prev.completedGroups,
           categories.find(
@@ -136,14 +115,14 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
   };
 
   const handleDeselectAll = () => {
-    updateGameState((prev) => ({
+    setGameState((prev) => ({
       ...prev,
       selected: [],
     }));
   };
 
   const handleSelect = (label: string) => {
-    updateGameState((prev) => {
+    setGameState((prev) => {
       if (prev.selected.includes(label)) {
         return {
           ...prev,
