@@ -1,3 +1,5 @@
+"use client";
+
 import { PlayLink } from "./PlayLink";
 
 const Connections = async () => {
