@@ -34,7 +34,7 @@ export const ConnectionsItem: React.FC<ConnectionsItemProps> = ({
         onClick={() => onClick(label)}
         className={cn(
           "w-full h-full grid place-content-center z-0",
-          "rounded-md uppercase md:text-base text-xs font-bold select-none",
+          "rounded-md uppercase font-bold select-none",
           {
             "bg-stone-200 dark:bg-gray-800": !selected,
             "text-black dark:text-gray-300": !selected,
@@ -45,6 +45,8 @@ export const ConnectionsItem: React.FC<ConnectionsItemProps> = ({
             "animate-jiggleIncorrect": jiggleIncorrect,
             "animate-jiggleCorrect": jiggleCorrect,
             "cursor-default": completed,
+            "md:text-base text-sm": label.length < 10,
+            "md:text-xs text-[.65rem]": label.length >= 10,
           },
         )}
       >
