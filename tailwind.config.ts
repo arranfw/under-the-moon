@@ -53,14 +53,20 @@ const config: Config = {
       },
     },
     animation: {
-      wiggle: "wiggle .25s ease-in-out infinite",
+      jiggleIncorrect: "jiggleIncorrect .25s ease-in-out infinite",
+      jiggleCorrect: "jiggleCorrect 400ms ease-in-out",
       popIn: "popIn 500ms ease-in-out, fadeIn 500ms ease-in-out",
+      slideDown: "slideDown 500ms ease-in-out, fadeIn 500ms ease-in-out",
     },
     keyframes: {
-      wiggle: {
+      jiggleIncorrect: {
         "0%, 100%": { transform: "translateX(0px)" },
         "33%": { transform: "translateX(4px)" },
         "77%": { transform: "translateX(-4px)" },
+      },
+      jiggleCorrect: {
+        "0%, 100%": { transform: "translateY(0px)" },
+        "50%": { transform: "translateY(-8px)" },
       },
       popIn: {
         "0%": { transform: "scale(.8)" },
@@ -70,6 +76,11 @@ const config: Config = {
       fadeIn: {
         "0%": { opacity: "0" },
         "100%": { opacity: "1" },
+      },
+      slideDown: {
+        "0%": { transform: "translateY(-100%)" },
+        "50%": { transform: "translateY(10%)" },
+        "100%": { transform: "translateY(0)" },
       },
     },
   },

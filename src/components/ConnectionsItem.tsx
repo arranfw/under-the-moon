@@ -8,7 +8,8 @@ interface ConnectionsItemProps {
   label: string;
   selected?: boolean;
   completed?: boolean;
-  jiggle?: boolean;
+  jiggleIncorrect?: boolean;
+  jiggleCorrect?: boolean;
 }
 
 export const ConnectionsItem: React.FC<ConnectionsItemProps> = ({
@@ -18,12 +19,13 @@ export const ConnectionsItem: React.FC<ConnectionsItemProps> = ({
   onClick,
   selected,
   completed,
-  jiggle,
+  jiggleIncorrect,
+  jiggleCorrect,
 }) => {
   return (
     <div
       className={cn(
-        "p-1 box-border transition-all duration-700",
+        "p-1 box-border transition-all duration-1000",
         `absolute w-[25%] h-[25%]`,
         `top-[${(row * 25).toFixed(0)}%] left-[${(col * 25).toFixed(0)}%]`,
       )}
@@ -40,7 +42,8 @@ export const ConnectionsItem: React.FC<ConnectionsItemProps> = ({
             "bg-connections-button-active": selected,
             "text-connections-button-active": selected,
             "scale-105": selected,
-            "animate-wiggle": jiggle,
+            "animate-jiggleIncorrect": jiggleIncorrect,
+            "animate-jiggleCorrect": jiggleCorrect,
             "cursor-default": completed,
           },
         )}
