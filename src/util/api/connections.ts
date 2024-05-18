@@ -1,4 +1,5 @@
 import { LocalDate } from "@js-joda/core";
+import { flatMap, sortBy } from "lodash";
 
 export interface Card {
   content: string;
@@ -38,6 +39,11 @@ export const getConnectionsData = async (
       difficulty: i,
     })),
   };
+};
+
+export const gameDataToGrid = (gameData: ConnectionsGameData) => {
+  const cards = flatMap(gameData.categories, (category) => category.cards);
+  return sortBy(cards, "position").map((card) => card.content);
 };
 
 export const connectionsDataToGameState = (

@@ -1,5 +1,5 @@
 import { ConnectionsDateNavLink } from "@/components/ConnectionsDateNavLink";
-import { getConnectionsData } from "@/util/api/connections";
+import { gameDataToGrid, getConnectionsData } from "@/util/api/connections";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { DateTimeFormatter, LocalDate } from "@js-joda/core";
 import "@js-joda/locale_en";
@@ -19,7 +19,9 @@ const Connections = async ({
     typeof searchParams.date === "string"
       ? LocalDate.parse(searchParams.date)
       : LocalDate.now();
-  const data = await getConnectionsData(date);
+
+  const gameData = await getConnectionsData(date);
+  const gameGrid = gameDataToGrid(gameData);
 
   const todayString = date.format(dateFormatter);
 
@@ -42,7 +44,11 @@ const Connections = async ({
         </div>
         <p>Create four groups of four!</p>
       </div>
-      <ConnectionsGame gameData={data} />
+      <ConnectionsGame
+        categories={gameData.categories}
+        gameGrid={gameGrid}
+        date={gameData.print_date}
+      />
     </div>
   );
 };

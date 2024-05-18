@@ -1,65 +1,92 @@
 "use client";
 
 import { cn } from "@/util";
-import React, { useState } from "react";
+import React, { SetStateAction, useEffect, useState } from "react";
 import lodashShuffle from "lodash/shuffle";
 import { ConnectionsActionButton } from "@/components/ConnectionsActionButton";
 import { Category, ConnectionsGameData } from "@/util/api/connections";
-import { flatMap, intersection, sortBy } from "lodash";
+import { intersection } from "lodash";
 import { ConnectionsItem } from "./ConnectionsItem";
-
-const gameDataToGrid = (gameData: ConnectionsGameData) => {
-  const cards = flatMap(gameData.categories, (category) => category.cards);
-  return sortBy(cards, "position").map((card) => card.content);
-};
 
 interface GameState {
   selected: string[];
   correctGuesses: string[];
   incorrectGuesses: string[][];
   completedGroups: Category[];
+  grid: string[];
 }
 
-const initialGameState: GameState = {
-  selected: [],
-  correctGuesses: [],
-  incorrectGuesses: [],
-  completedGroups: [],
-};
-
 interface ConnectionsGameProps {
-  gameData: ConnectionsGameData;
+  gameGrid: string[];
+  categories: Category[];
+  date: string;
 }
 
 export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
-  gameData,
+  gameGrid,
+  categories,
+  date,
 }) => {
-  const originalGrid = gameDataToGrid(gameData);
-  const [
-    { completedGroups, correctGuesses, incorrectGuesses, selected },
-    setGameState,
-  ] = useState<GameState>(initialGameState);
-  const [grid, setGrid] = useState(gameDataToGrid(gameData));
+  const initialGameState = {
+    selected: [],
+    correctGuesses: [],
+    incorrectGuesses: [],
+    completedGroups: [],
+    grid: gameGrid,
+  };
+
+  const [gameState, setGameState] = useState<GameState>(initialGameState);
+  const { completedGroups, correctGuesses, incorrectGuesses, selected, grid } =
+    gameState;
   const numberOfCorrectGuesses = correctGuesses.length;
-  const [jigglingIncorrect, setJigglingIncorrect] = useState<string[]>([]);
+  const [jigglingItems, setJigglingItems] = useState<string[]>([]);
+
+  const updateGameState = (newState: SetStateAction<GameState>) => {
+    const newValue =
+      newState instanceof Function ? newState(gameState) : newState;
+
+    setGameState(newValue);
+    localStorage.setItem(
+      `connections-game-state-${date}`,
+      JSON.stringify(newValue),
+    );
+  };
+
+  useEffect(() => {
+    const savedState = localStorage.getItem(`connections-game-state-${date}`);
+    const restoreState = savedState ? JSON.parse(savedState) : initialGameState;
+
+    setGameState(() => ({
+      ...restoreState,
+      grid: restoreState.grid ? restoreState.grid : initialGameState.grid,
+    }));
+  }, [gameGrid, date]);
 
   const promoteLabels = (labels: string[]) => {
-    setGrid((prev) => [
-      ...correctGuesses,
-      ...labels,
-      ...prev.filter((l) => !labels.includes(l) && !correctGuesses.includes(l)),
-    ]);
+    updateGameState((prev) => ({
+      ...prev,
+      grid: [
+        ...correctGuesses,
+        ...labels,
+        ...prev.grid.filter(
+          (l) => !labels.includes(l) && !correctGuesses.includes(l),
+        ),
+      ],
+    }));
   };
 
   const shuffle = () => {
-    setGrid((prev) => [
-      ...prev.slice(0, numberOfCorrectGuesses),
-      ...lodashShuffle(prev.slice(numberOfCorrectGuesses)),
-    ]);
+    updateGameState((prev) => ({
+      ...prev,
+      grid: [
+        ...prev.grid.slice(0, numberOfCorrectGuesses),
+        ...lodashShuffle(prev.grid.slice(numberOfCorrectGuesses)),
+      ],
+    }));
   };
 
   const isCorrectGuess = () =>
-    gameData.categories.some(
+    categories.some(
       (category) =>
         intersection(
           category.cards.map((card) => card.content),
@@ -71,13 +98,13 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     const currentGuess = [...selected];
     const isCorrect = isCorrectGuess();
     if (!isCorrect) {
-      setGameState((prev) => ({
+      updateGameState((prev) => ({
         ...prev,
         incorrectGuesses: [...prev.incorrectGuesses, currentGuess],
       }));
-      setJigglingIncorrect(currentGuess);
+      setJigglingItems(currentGuess);
       setTimeout(() => {
-        setJigglingIncorrect([]);
+        setJigglingItems([]);
       }, 1000);
       return;
     }
@@ -86,17 +113,17 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
       return;
     }
     promoteLabels(currentGuess);
-    setGameState((prev) => ({
+    updateGameState((prev) => ({
       ...prev,
       selected: [],
       correctGuesses: [...prev.correctGuesses, ...currentGuess],
     }));
     setTimeout(() => {
-      setGameState((prev) => ({
+      updateGameState((prev) => ({
         ...prev,
         completedGroups: [
           ...prev.completedGroups,
-          gameData.categories.find(
+          categories.find(
             (category) =>
               intersection(
                 category.cards.map((card) => card.content),
@@ -109,21 +136,21 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
   };
 
   const handleDeselectAll = () => {
-    setGameState((prev) => ({
+    updateGameState((prev) => ({
       ...prev,
       selected: [],
     }));
   };
 
   const handleSelect = (label: string) => {
-    setGameState((prev) => {
+    updateGameState((prev) => {
       if (prev.selected.includes(label)) {
         return {
           ...prev,
           selected: prev.selected.filter((l) => l !== label),
         };
       }
-      if (correctGuesses.includes(label)) {
+      if (prev.correctGuesses.includes(label)) {
         return prev;
       }
       if (prev.selected.length === 4) {
@@ -139,7 +166,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="relative w-96 h-96">
-        {originalGrid.map((label, i) => (
+        {gameGrid.map((label) => (
           <ConnectionsItem
             onClick={handleSelect}
             key={label}
@@ -148,7 +175,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
             label={label}
             selected={selected.includes(label)}
             completed={correctGuesses.includes(label)}
-            jiggle={jigglingIncorrect.includes(label)}
+            jiggle={jigglingItems.includes(label)}
           />
         ))}
 
@@ -211,7 +238,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
         </ConnectionsActionButton>
         <ConnectionsActionButton
           onClick={submit}
-          disabled={selected.length !== 4 || jigglingIncorrect.length !== 0}
+          disabled={selected.length !== 4 || jigglingItems.length !== 0}
         >
           Submit
         </ConnectionsActionButton>
