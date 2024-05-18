@@ -45,8 +45,8 @@ export const ConnectionsItem: React.FC<ConnectionsItemProps> = ({
             "animate-jiggleIncorrect": jiggleIncorrect,
             "animate-jiggleCorrect": jiggleCorrect,
             "cursor-default": completed,
-            "md:text-base text-sm": label.length < 10,
-            "md:text-xs text-[.65rem]": label.length >= 10,
+            "md:text-base text-sm": label.length < 8,
+            "md:text-xs text-[.65rem]": label.length >= 8,
           },
         )}
       >
