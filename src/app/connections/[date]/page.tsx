@@ -29,12 +29,12 @@ const Connections = async ({ params }: { params: { date: string } }) => {
         </div>
         <div className="flex w-full justify-between items-center">
           <ConnectionsDateNavLink
-            href={`/connections?date=${date.minusDays(1).toJSON()}`}
+            href={`/connections/${date.minusDays(1).toJSON()}`}
             icon={faAngleLeft}
           />
           <p className="text-lg">{todayString}</p>
           <ConnectionsDateNavLink
-            href={`/connections?date=${date.plusDays(1).toJSON()}`}
+            href={`/connections/${date.plusDays(1).toJSON()}`}
             icon={faAngleRight}
           />
         </div>

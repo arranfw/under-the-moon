@@ -90,10 +90,22 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     }
   };
 
+  const getWasPreviouslyGuessed = () => {
+    return incorrectGuesses.some(
+      (incorrectGuess) => intersection(incorrectGuess, selected).length === 4,
+    );
+  };
+
   const submit = async () => {
     const currentGuess = [...selected];
     const correctGuessCount = getCorrectGuessCount();
     const isCorrect = correctGuessCount === 4;
+    const wasPreviouslyGuessed = getWasPreviouslyGuessed();
+
+    if (wasPreviouslyGuessed) {
+      window.alert("Already guessed!");
+      return;
+    }
 
     if (correctGuessCount === 3) {
       window.alert("One away...");
@@ -196,7 +208,9 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     });
   };
 
-  const gameComplete = completedGroups.length === categories.length;
+  const gameComplete =
+    completedGroups.length === categories.length ||
+    incorrectGuesses.length === 4;
 
   return (
     <div className="flex flex-col items-center gap-4">
