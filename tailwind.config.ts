@@ -39,6 +39,10 @@ const config: Config = {
         "connections-button": "rgb(0, 0, 0)",
         "connections-button-active": "rgb(255, 255, 255)",
       },
+      width: {
+        "120": "30rem",
+        "88": "22rem",
+      },
       top: {
         "20": "5rem",
         "30": "7.5rem",

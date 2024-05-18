@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
-      <body className={cn(inter.className, "h-full py-12 px-6 md:px-12 ")}>
+      <body className={cn(inter.className, "h-full  md:p-12 p-2 py-6 ")}>
         {children}
       </body>
     </html>

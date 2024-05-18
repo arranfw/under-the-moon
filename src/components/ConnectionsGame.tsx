@@ -200,7 +200,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <div className="relative w-96 h-96">
+      <div className="relative w-full aspect-square">
         {!gameComplete &&
           gameGrid.map((label) => (
             <ConnectionsItem

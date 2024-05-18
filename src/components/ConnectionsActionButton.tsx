@@ -15,7 +15,7 @@ export const ConnectionsActionButton: React.FC<ConnectionsActionButton> = ({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={cn("border rounded-full px-2 py-3", {
+      className={cn("border rounded-full p-4 py-3", {
         "border-black dark:border-white": !disabled,
         "text-black dark:text-white": !disabled,
         "border-gray-500": disabled,
