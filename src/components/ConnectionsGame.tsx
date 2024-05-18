@@ -7,7 +7,7 @@ import { ConnectionsActionButton } from "@/components/ConnectionsActionButton";
 import { Category } from "@/util/api/connections";
 import { intersection } from "lodash";
 import { ConnectionsItem } from "./ConnectionsItem";
-import { useLocalStorage } from "@uidotdev/usehooks";
+import { useLocalStorage } from "usehooks-ts";
 
 interface GameState {
   selected: string[];
@@ -42,6 +42,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
   ] = useLocalStorage<GameState>(
     `connections-game-state-${date}`,
     initialGameState,
+    { initializeWithValue: false },
   );
   const numberOfCorrectGuesses = correctGuesses.length;
   const [jigglingItems, setJigglingItems] = useState<string[]>([]);
@@ -56,18 +57,28 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     }));
   };
 
-  const isCorrectGuess = () =>
-    categories.some(
-      (category) =>
-        intersection(
-          category.cards.map((card) => card.content),
-          selected,
-        ).length === 4,
-    );
+  const getCorrectGuessCount = () => {
+    for (const category of categories) {
+      const correctCount = intersection(
+        category.cards.map((card) => card.content),
+        selected,
+      ).length;
+
+      if (correctCount > 2) {
+        return correctCount;
+      }
+    }
+  };
 
   const submit = () => {
     const currentGuess = [...selected];
-    const isCorrect = isCorrectGuess();
+    const correctGuessCount = getCorrectGuessCount();
+    const isCorrect = correctGuessCount === 4;
+
+    if (correctGuessCount === 3) {
+      window.alert("One away...");
+    }
+
     if (!isCorrect) {
       setGameState((prev) => ({
         ...prev,
@@ -83,6 +94,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     if (currentGuess.length !== 4) {
       return;
     }
+
     const reorderedGrid = [
       ...correctGuesses,
       ...currentGuess,
@@ -97,20 +109,25 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
       grid: reorderedGrid,
     }));
     setTimeout(() => {
-      setGameState((prev) => ({
-        ...prev,
-        grid: reorderedGrid,
-        completedGroups: [
-          ...prev.completedGroups,
-          categories.find(
-            (category) =>
-              intersection(
-                category.cards.map((card) => card.content),
-                currentGuess,
-              ).length === 4,
-          )!,
-        ],
-      }));
+      setGameState((prev) => {
+        console.log("prev", prev);
+
+        return {
+          ...prev,
+          selected: [],
+          grid: reorderedGrid,
+          completedGroups: [
+            ...prev.completedGroups,
+            categories.find(
+              (category) =>
+                intersection(
+                  category.cards.map((card) => card.content),
+                  currentGuess,
+                ).length === 4,
+            )!,
+          ],
+        };
+      });
     }, 600);
   };
 
