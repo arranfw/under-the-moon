@@ -9,12 +9,14 @@ const dateFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy").withLocale(
   Locale.ENGLISH,
 );
 
-interface BasePageProps extends React.PropsWithChildren {
-  date: LocalDate;
+interface ConnectionsLayoutProps extends React.PropsWithChildren {
   params: { date: string };
 }
 
-const ConnectionsLayout: React.FC<BasePageProps> = ({ children, params }) => {
+const ConnectionsLayout: React.FC<ConnectionsLayoutProps> = ({
+  children,
+  params,
+}) => {
   const date =
     typeof params.date === "string"
       ? LocalDate.parse(params.date)
