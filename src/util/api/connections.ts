@@ -22,12 +22,12 @@ export interface ConnectionsGameData {
 
 export const getConnectionsData = async (
   date: LocalDate,
-): Promise<ConnectionsGameData> => {
+): Promise<ConnectionsGameData | null> => {
   const res = await fetch(
     `https://www.nytimes.com/svc/connections/v2/${date.toJSON()}.json`,
   );
   if (!res.ok) {
-    throw new Error("Failed to fetch data");
+    return null;
   }
 
   const data: ConnectionsGameData = await res.json();

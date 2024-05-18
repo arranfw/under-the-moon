@@ -10,6 +10,15 @@ const Connections = async ({ params }: { params: { date: string } }) => {
       : LocalDate.now();
 
   const gameData = await getConnectionsData(date);
+
+  if (!gameData) {
+    return (
+      <div className="w-full h-56 grid place-content-center text-xl">
+        Not released yet!
+      </div>
+    );
+  }
+
   const gameGrid = gameDataToGrid(gameData);
 
   return (
