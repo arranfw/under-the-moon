@@ -55,36 +55,36 @@ const config: Config = {
         "40": "10rem",
         "50": "12.5rem",
       },
-    },
-    animation: {
-      jiggleIncorrect: "jiggleIncorrect .25s ease-in-out infinite",
-      jiggleCorrect: "jiggleCorrect 400ms ease-in-out",
-      popIn: "popIn 500ms ease-in-out, fadeIn 500ms ease-in-out",
-      slideDown: "slideDown 500ms ease-in-out, fadeIn 500ms ease-in-out",
-    },
-    keyframes: {
-      jiggleIncorrect: {
-        "0%, 100%": { transform: "translateX(0px)" },
-        "33%": { transform: "translateX(4px)" },
-        "77%": { transform: "translateX(-4px)" },
+      animation: {
+        jiggleIncorrect: "jiggleIncorrect .25s ease-in-out infinite",
+        jiggleCorrect: "jiggleCorrect 400ms ease-in-out",
+        popIn: "popIn 500ms ease-in-out, fadeIn 500ms ease-in-out",
+        slideDown: "slideDown 500ms ease-in-out, fadeIn 500ms ease-in-out",
       },
-      jiggleCorrect: {
-        "0%, 100%": { transform: "translateY(0px)" },
-        "50%": { transform: "translateY(-8px)" },
-      },
-      popIn: {
-        "0%": { transform: "scale(.8)" },
-        "50%": { transform: "scale(1.1)" },
-        "100%": { transform: "scale(1)" },
-      },
-      fadeIn: {
-        "0%": { opacity: "0" },
-        "100%": { opacity: "1" },
-      },
-      slideDown: {
-        "0%": { transform: "translateY(-100%)" },
-        "50%": { transform: "translateY(10%)" },
-        "100%": { transform: "translateY(0)" },
+      keyframes: {
+        jiggleIncorrect: {
+          "0%, 100%": { transform: "translateX(0px)" },
+          "33%": { transform: "translateX(4px)" },
+          "77%": { transform: "translateX(-4px)" },
+        },
+        jiggleCorrect: {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-8px)" },
+        },
+        popIn: {
+          "0%": { transform: "scale(.8)" },
+          "50%": { transform: "scale(1.1)" },
+          "100%": { transform: "scale(1)" },
+        },
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        slideDown: {
+          "0%": { transform: "translateY(-100%)" },
+          "50%": { transform: "translateY(10%)" },
+          "100%": { transform: "translateY(0)" },
+        },
       },
     },
   },
