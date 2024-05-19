@@ -23,6 +23,7 @@ const Connections = async ({ params }: { params: { date: string } }) => {
 
   return (
     <ConnectionsGame
+      gameNumber={gameData.id}
       categories={gameData.categories}
       gameGrid={gameGrid}
       date={gameData.print_date}

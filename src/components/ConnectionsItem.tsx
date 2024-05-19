@@ -1,4 +1,5 @@
 import { cn } from "@/util";
+import { isNil } from "lodash";
 import React from "react";
 import { ConnectionsItemMenu } from "./ConnectionsItemMenu";
 
@@ -60,9 +61,12 @@ export const ConnectionsItem: React.FC<ConnectionsItemProps> = ({
         >
           <span
             className={cn(
-              "absolute top-0 right-0 w-1/6 h-1/6 bg-white rounded-bl-md rounded-tr-md",
+              "absolute top-0 right-0 w-6 h-6 bg-white rounded-bl-md rounded-tr-md",
               `bg-connections-difficulty-${difficultyMark}`,
               `dark:bg-connections-difficulty-${difficultyMark}-dark`,
+              {
+                "shadow-md": !isNil(difficultyMark),
+              },
             )}
           />
           {label}

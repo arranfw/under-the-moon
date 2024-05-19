@@ -13,9 +13,15 @@ const ColorMenuItem: React.FC<ColorMenuItemProps> = ({
 }) => (
   <ContextMenu.Item
     onClick={() => onClick(difficulty)}
-    className={cn("py-1 px-4", {
-      [`bg-connections-difficulty-${difficulty} dark:bg-connections-difficulty-${difficulty}-dark`]:
-        difficulty !== null,
+    className={cn("py-1 pl-4 pr-8 hover:brightness-110 cursor-pointer", {
+      "bg-connections-difficulty-0 dark:bg-connections-difficulty-0-dark":
+        difficulty === 0,
+      "bg-connections-difficulty-1 dark:bg-connections-difficulty-1-dark":
+        difficulty === 1,
+      "bg-connections-difficulty-2 dark:bg-connections-difficulty-2-dark":
+        difficulty === 2,
+      "bg-connections-difficulty-3 dark:bg-connections-difficulty-3-dark":
+        difficulty === 3,
       "bg-connections-button dark:bg-gray-800": difficulty === null,
     })}
   >

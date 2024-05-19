@@ -15,12 +15,6 @@ const config: Config = {
     "left-[25%]",
     "left-[50%]",
     "left-[75%]",
-    {
-      pattern: /connections-difficulty-\d/,
-    },
-    {
-      pattern: /connections-difficulty-\d-dark/,
-    },
   ],
   theme: {
     extend: {
@@ -38,7 +32,7 @@ const config: Config = {
         "connections-difficulty-3": "rgb(186, 129, 197)",
         "connections-difficulty-0-dark": "rgb(143, 120, 19)",
         "connections-difficulty-1-dark": "rgb(85, 122, 11)",
-        "connections-difficulty-2-dark": "rgb(18, 37, 77)",
+        "connections-difficulty-2-dark": "rgb(26, 54, 115)",
         "connections-difficulty-3-dark": "rgb(77, 14, 89)",
       },
       colors: {

@@ -1,17 +1,19 @@
 "use client";
 
 import { cn } from "@/util";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import lodashShuffle from "lodash/shuffle";
 import { ConnectionsActionButton } from "@/components/ConnectionsActionButton";
 import { Category } from "@/util/api/connections";
-import { intersection } from "lodash";
+import { flatMap, intersection } from "lodash";
 import { ConnectionsItem } from "./ConnectionsItem";
 import { useLocalStorage } from "usehooks-ts";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClipboard } from "@fortawesome/free-regular-svg-icons";
 
 const guessMultiplier = [1.771561, 1.61051, 1.4641, 1.331, 1.21, 1.1, 1];
 const difficultyMultiplier = [2, 8, 16, 34];
-
+const difficultyEmojiMap = ["🟨", "🟩", "🟦", "🟪"];
 interface GameState {
   selected: string[];
   correctGuesses: string[];
@@ -22,18 +24,21 @@ interface GameState {
   guessCount: number;
   hintsUsed: number;
   markedItems: { label: string; difficulty: number }[];
+  gameSummary: number[][];
 }
 
 interface ConnectionsGameProps {
   gameGrid: string[];
   categories: Category[];
   date: string;
+  gameNumber: number;
 }
 
 export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
   gameGrid,
   categories,
   date,
+  gameNumber,
 }) => {
   const initialGameState: GameState = {
     selected: [],
@@ -45,6 +50,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     guessCount: 0,
     markedItems: [],
     hintsUsed: 0,
+    gameSummary: [],
   };
 
   const [
@@ -58,6 +64,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
       guessCount,
       markedItems,
       hintsUsed,
+      gameSummary,
     },
     setGameState,
   ] = useLocalStorage<GameState>(
@@ -73,6 +80,8 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
   const [jigglingCorrectItems, setJigglingCorrectItems] = useState<string[]>(
     [],
   );
+
+  const gameCompletedRef = useRef<HTMLDivElement>(null);
 
   const handleShuffleClick = () => {
     setGameState((prev) => ({
@@ -134,6 +143,17 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
       window.alert("Already guessed!");
       return;
     }
+
+    const fullGuess = currentGuess.map(
+      (guess) =>
+        categories.find((category) =>
+          category.cards.map((card) => card.content).includes(guess),
+        )?.difficulty!,
+    );
+    setGameState((prev) => ({
+      ...prev,
+      gameSummary: [...prev.gameSummary, fullGuess],
+    }));
 
     if (correctGuessCount === 3) {
       window.alert("One away...");
@@ -243,6 +263,12 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     });
   };
 
+  const handleCopySummary = () => {
+    navigator.clipboard.writeText(
+      gameCompletedRef.current?.innerText.replaceAll("\n\n", "\n") || "",
+    );
+  };
+
   const handleMarkItem = (label: string, difficulty: number | null) => {
     if (difficulty === null) {
       setGameState((prev) => ({
@@ -307,8 +333,16 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
               className={cn(
                 "flex flex-col justify-center items-center relative z-10",
                 "h-full w-full rounded-md color-black tracking-wider text-black dark:text-white",
-                `bg-connections-difficulty-${category.difficulty}`,
-                `dark:bg-connections-difficulty-${category.difficulty}-dark`,
+                {
+                  "bg-connections-difficulty-0 dark:bg-connections-difficulty-0-dark":
+                    category.difficulty === 0,
+                  "bg-connections-difficulty-1 dark:bg-connections-difficulty-1-dark":
+                    category.difficulty === 1,
+                  "bg-connections-difficulty-2 dark:bg-connections-difficulty-2-dark":
+                    category.difficulty === 2,
+                  "bg-connections-difficulty-3 dark:bg-connections-difficulty-3-dark":
+                    category.difficulty === 3,
+                },
               )}
             >
               <p className="font-bold">{category.title}</p>
@@ -319,17 +353,38 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
 
         {gameComplete && (
           <div
+            ref={gameCompletedRef}
             className={cn(
-              "h-[12.5%] rounded-md m-1 flex flex-col items-center justify-center",
+              "rounded-md m-1 p-2 flex flex-col items-center justify-center relative",
               "bg-gray-200 dark:bg-gray-800 text-black dark:text-white",
               "animate-slideDown",
             )}
           >
+            <button
+              className="absolute top-2 right-2 h-8 w-8 rounded-full hover:bg-gray-300"
+              onClick={handleCopySummary}
+            >
+              <FontAwesomeIcon icon={faClipboard} className="h-full w-full" />
+            </button>
+            <p>Connections</p>
+            <p>Puzzle #{gameNumber}</p>
+            <div className="mb-2">
+              {gameSummary.map((category, i) => (
+                <p key={`${i}`}>
+                  {category.map((summaryItem, j) => (
+                    <span>{difficultyEmojiMap[summaryItem]}</span>
+                  ))}
+                </p>
+              ))}
+            </div>
+
             <p className="tracking-wider">
-              <span className="font-bold">{Math.round(score)}</span> points in{" "}
-              <span className="font-bold">{guessCount}</span> guesses with{" "}
-              <span className="font-bold">{hintsUsed}</span> hint
-              {hintsUsed > 1 && "s"}
+              <span className="font-bold">
+                {Math.round(score) === 100 ? "💯" : Math.round(score)}
+              </span>{" "}
+              points in <span className="font-bold">{guessCount}</span> guesses
+              with <span className="font-bold">{hintsUsed}</span> hint
+              {hintsUsed !== 1 && "s"}
             </p>
           </div>
         )}
@@ -356,7 +411,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
         className={cn(
           "flex flex-wrap justify-center gap-2 w-full transition-opacity duration-300",
           {
-            "opacity-0": gameComplete,
+            hidden: gameComplete,
           },
         )}
       >
@@ -367,7 +422,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
           onClick={handleHintClick}
           disabled={selected.length !== 0}
         >
-          Hint (-2pts)
+          Hint (-10pts)
         </ConnectionsActionButton>
         <ConnectionsActionButton
           onClick={handleDeselectAll}
