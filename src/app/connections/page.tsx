@@ -2,7 +2,7 @@
 
 import { PlayLink } from "./PlayLink";
 
-const Connections = async () => {
+const Connections = () => {
   return (
     <div className="h-full w-96 flex flex-col m-auto">
       <div className="flex items-center flex-col gap-6 mb-6">

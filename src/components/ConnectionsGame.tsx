@@ -373,7 +373,9 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
                 {gameSummary.map((category, i) => (
                   <p key={`${i}`}>
                     {category.map((summaryItem, j) => (
-                      <span>{difficultyEmojiMap[summaryItem]}</span>
+                      <span key={`${i}-${j}`}>
+                        {difficultyEmojiMap[summaryItem]}
+                      </span>
                     ))}
                   </p>
                 ))}
