@@ -22,9 +22,9 @@ interface GameState {
   grid: string[];
   score: number;
   guessCount: number;
-  hintsUsed: number;
-  markedItems: { label: string; difficulty: number }[];
-  gameSummary: number[][];
+  hintsUsed?: number;
+  markedItems?: { label: string; difficulty: number }[];
+  gameSummary?: number[][];
 }
 
 interface ConnectionsGameProps {
@@ -110,7 +110,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     setGameState((prev) => ({
       ...prev,
       score: prev.score - 10,
-      hintsUsed: prev.hintsUsed + 1,
+      hintsUsed: prev.hintsUsed || 0 + 1,
     }));
   };
 
@@ -152,7 +152,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     );
     setGameState((prev) => ({
       ...prev,
-      gameSummary: [...prev.gameSummary, fullGuess],
+      gameSummary: [...(prev.gameSummary || []), fullGuess],
     }));
 
     if (correctGuessCount === 3) {
@@ -273,14 +273,14 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     if (difficulty === null) {
       setGameState((prev) => ({
         ...prev,
-        markedItems: prev.markedItems.filter((item) => item.label !== label),
+        markedItems: prev.markedItems?.filter((item) => item.label !== label),
       }));
       return;
     }
-    if (markedItems.some((item) => item.label === label)) {
+    if (markedItems?.some((item) => item.label === label)) {
       setGameState((prev) => ({
         ...prev,
-        markedItems: prev.markedItems.map((item) => {
+        markedItems: prev.markedItems?.map((item) => {
           if (item.label === label) {
             return { label, difficulty };
           }
@@ -291,7 +291,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     }
     setGameState((prev) => ({
       ...prev,
-      markedItems: [...prev.markedItems, { label, difficulty }],
+      markedItems: [...(prev.markedItems || []), { label, difficulty }],
     }));
   };
 
@@ -316,7 +316,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
               jiggleIncorrect={jigglingIncorrectItems.includes(label)}
               jiggleCorrect={jigglingCorrectItems.includes(label)}
               difficultyMark={
-                markedItems.find((item) => item.label === label)?.difficulty
+                markedItems?.find((item) => item.label === label)?.difficulty
               }
             />
           ))}
@@ -367,17 +367,18 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
               <FontAwesomeIcon icon={faClipboard} className="h-full w-full" />
             </button>
             <p>Connections</p>
-            <p>Puzzle #{gameNumber}</p>
-            <div className="mb-2">
-              {gameSummary.map((category, i) => (
-                <p key={`${i}`}>
-                  {category.map((summaryItem, j) => (
-                    <span>{difficultyEmojiMap[summaryItem]}</span>
-                  ))}
-                </p>
-              ))}
-            </div>
-
+            <p>Puzzle #{gameNumber}</p>{" "}
+            {gameSummary && (
+              <div className="mb-2">
+                {gameSummary.map((category, i) => (
+                  <p key={`${i}`}>
+                    {category.map((summaryItem, j) => (
+                      <span>{difficultyEmojiMap[summaryItem]}</span>
+                    ))}
+                  </p>
+                ))}
+              </div>
+            )}
             <p className="tracking-wider">
               <span className="font-bold">
                 {Math.round(score) === 100 ? "💯" : Math.round(score)}
@@ -432,7 +433,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
         </ConnectionsActionButton>
         <ConnectionsActionButton
           onClick={handleUnmarkAll}
-          disabled={markedItems.length === 0}
+          disabled={markedItems?.length === 0}
         >
           Unmark All
         </ConnectionsActionButton>
