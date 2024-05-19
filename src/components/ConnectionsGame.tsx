@@ -20,6 +20,8 @@ interface GameState {
   grid: string[];
   score: number;
   guessCount: number;
+  hintsUsed: number;
+  markedItems: { label: string; difficulty: number }[];
 }
 
 interface ConnectionsGameProps {
@@ -41,6 +43,8 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     score: 0,
     grid: gameGrid,
     guessCount: 0,
+    markedItems: [],
+    hintsUsed: 0,
   };
 
   const [
@@ -52,11 +56,14 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
       grid,
       score,
       guessCount,
+      markedItems,
+      hintsUsed,
     },
     setGameState,
   ] = useLocalStorage<GameState>(
     `connections-game-state-${date}`,
     initialGameState,
+
     { initializeWithValue: false },
   );
   const numberOfCorrectGuesses = correctGuesses.length;
@@ -67,13 +74,34 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     [],
   );
 
-  const shuffle = () => {
+  const handleShuffleClick = () => {
     setGameState((prev) => ({
       ...prev,
       grid: [
         ...prev.grid.slice(0, numberOfCorrectGuesses),
         ...lodashShuffle(prev.grid.slice(numberOfCorrectGuesses)),
       ],
+    }));
+  };
+
+  const handleHintClick = () => {
+    const hintCategory = categories.find(
+      (category) =>
+        !completedGroups.some((completedGroup) =>
+          completedGroup.title.includes(category.title),
+        ),
+    );
+
+    if (hintCategory) {
+      setJigglingCorrectItems(
+        hintCategory.cards.map((card) => card.content).slice(0, 2),
+      );
+    }
+
+    setGameState((prev) => ({
+      ...prev,
+      score: prev.score - 10,
+      hintsUsed: prev.hintsUsed + 1,
     }));
   };
 
@@ -187,6 +215,13 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     }));
   };
 
+  const handleUnmarkAll = () => {
+    setGameState((prev) => ({
+      ...prev,
+      markedItems: [],
+    }));
+  };
+
   const handleSelect = (label: string) => {
     setGameState((prev) => {
       if (prev.selected.includes(label)) {
@@ -208,6 +243,32 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     });
   };
 
+  const handleMarkItem = (label: string, difficulty: number | null) => {
+    if (difficulty === null) {
+      setGameState((prev) => ({
+        ...prev,
+        markedItems: prev.markedItems.filter((item) => item.label !== label),
+      }));
+      return;
+    }
+    if (markedItems.some((item) => item.label === label)) {
+      setGameState((prev) => ({
+        ...prev,
+        markedItems: prev.markedItems.map((item) => {
+          if (item.label === label) {
+            return { label, difficulty };
+          }
+          return item;
+        }),
+      }));
+      return;
+    }
+    setGameState((prev) => ({
+      ...prev,
+      markedItems: [...prev.markedItems, { label, difficulty }],
+    }));
+  };
+
   const gameComplete =
     completedGroups.length === categories.length ||
     incorrectGuesses.length === 4;
@@ -219,6 +280,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
           gameGrid.map((label) => (
             <ConnectionsItem
               onClick={handleSelect}
+              onMarkItem={handleMarkItem}
               key={label}
               col={grid.indexOf(label) % 4}
               row={Math.floor(grid.indexOf(label) / 4)}
@@ -227,6 +289,9 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
               completed={correctGuesses.includes(label)}
               jiggleIncorrect={jigglingIncorrectItems.includes(label)}
               jiggleCorrect={jigglingCorrectItems.includes(label)}
+              difficultyMark={
+                markedItems.find((item) => item.label === label)?.difficulty
+              }
             />
           ))}
 
@@ -238,19 +303,12 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
             )}
           >
             <div
+              data-difficulty={category.difficulty}
               className={cn(
                 "flex flex-col justify-center items-center relative z-10",
                 "h-full w-full rounded-md color-black tracking-wider text-black dark:text-white",
-                {
-                  "bg-connections-difficulty-1 dark:bg-connections-difficulty-1-dark":
-                    category.difficulty === 0,
-                  "bg-connections-difficulty-2 dark:bg-connections-difficulty-2-dark":
-                    category.difficulty === 1,
-                  "bg-connections-difficulty-3 dark:bg-connections-difficulty-3-dark":
-                    category.difficulty === 2,
-                  "bg-connections-difficulty-4 dark:bg-connections-difficulty-4-dark":
-                    category.difficulty === 3,
-                },
+                `bg-connections-difficulty-${category.difficulty}`,
+                `dark:bg-connections-difficulty-${category.difficulty}-dark`,
               )}
             >
               <p className="font-bold">{category.title}</p>
@@ -269,7 +327,9 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
           >
             <p className="tracking-wider">
               <span className="font-bold">{Math.round(score)}</span> points in{" "}
-              <span className="font-bold">{guessCount}</span> guesses
+              <span className="font-bold">{guessCount}</span> guesses with{" "}
+              <span className="font-bold">{hintsUsed}</span> hint
+              {hintsUsed > 1 && "s"}
             </p>
           </div>
         )}
@@ -294,20 +354,32 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
 
       <div
         className={cn(
-          "flex justify-center gap-2 w-full transition-opacity duration-300",
+          "flex flex-wrap justify-center gap-2 w-full transition-opacity duration-300",
           {
             "opacity-0": gameComplete,
           },
         )}
       >
-        <ConnectionsActionButton onClick={shuffle}>
+        <ConnectionsActionButton onClick={handleShuffleClick}>
           Shuffle
+        </ConnectionsActionButton>
+        <ConnectionsActionButton
+          onClick={handleHintClick}
+          disabled={selected.length !== 0}
+        >
+          Hint (-2pts)
         </ConnectionsActionButton>
         <ConnectionsActionButton
           onClick={handleDeselectAll}
           disabled={selected.length === 0}
         >
           Deselect All
+        </ConnectionsActionButton>
+        <ConnectionsActionButton
+          onClick={handleUnmarkAll}
+          disabled={markedItems.length === 0}
+        >
+          Unmark All
         </ConnectionsActionButton>
         <ConnectionsActionButton
           onClick={submit}
