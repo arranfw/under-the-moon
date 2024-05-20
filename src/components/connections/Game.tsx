@@ -11,6 +11,7 @@ import { useLocalStorage } from "usehooks-ts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClipboard } from "@fortawesome/free-regular-svg-icons";
 import { connectionsColors } from "./util";
+import { CopyButton } from "../CopyButton";
 
 const guessMultiplier = [1.771561, 1.61051, 1.4641, 1.331, 1.21, 1.1, 1];
 const difficultyMultiplier = [2, 8, 16, 34];
@@ -267,12 +268,6 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     });
   };
 
-  const handleCopySummary = () => {
-    navigator.clipboard.writeText(
-      gameCompletedRef.current?.innerText.replaceAll("\n\n", "\n") || "",
-    );
-  };
-
   const handleMarkItem = (label: string, difficulty: number | null) => {
     if (difficulty === null) {
       setGameState((prev) => ({
@@ -361,12 +356,14 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
               "animate-slideDown",
             )}
           >
-            <button
-              className="absolute top-2 right-2 h-8 w-8 rounded-full hover:bg-gray-300"
-              onClick={handleCopySummary}
-            >
-              <FontAwesomeIcon icon={faClipboard} className="h-full w-full" />
-            </button>
+            <div className="absolute top-2 right-2">
+              <CopyButton
+                copyText={gameCompletedRef.current?.innerText.replaceAll(
+                  "\n\n",
+                  "\n",
+                )}
+              />
+            </div>
             <p>Connections</p>
             <p>Puzzle #{gameNumber - 13}</p>{" "}
             {gameSummary && (
