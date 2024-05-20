@@ -42,6 +42,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     markedItems: [],
     hintsUsed: 0,
     gameSummary: [],
+    hintedItems: [],
   };
 
   const [
@@ -56,6 +57,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
       hintsUsed,
       gameSummary,
       grid,
+      hintedItems,
     },
     gameDispatch,
   ] = useReducer(gameStateReducer, initialGameState);
@@ -66,7 +68,6 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
   const [jigglingCorrectItems, setJigglingCorrectItems] = useState<string[]>(
     [],
   );
-  const [hintedItems, setHintedItems] = useState<string[]>([]);
 
   const handleShuffleClick = () => {
     gameDispatch({ type: GameActionType.SHUFFLE });
@@ -80,13 +81,11 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
         ),
     );
 
-    if (hintCategory) {
-      setHintedItems(
-        hintCategory.cards.map((card) => card.content).slice(0, 2),
-      );
-    }
-
-    gameDispatch({ type: GameActionType.USE_HINT });
+    gameDispatch({
+      type: GameActionType.USE_HINT,
+      payload:
+        hintCategory?.cards.map((card) => card.content).slice(0, 2) || [],
+    });
   };
 
   const getCorrectGuessCount = () => {
@@ -178,7 +177,6 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
       },
     });
     await new Promise((resolve) => setTimeout(resolve, 600));
-    setHintedItems([]);
     if (completedGroup) {
       gameDispatch({
         type: GameActionType.PUSH_POST_CORRECT_GUESS,
@@ -229,7 +227,9 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
               difficultyMark={
                 markedItems?.find((item) => item.label === label)?.difficulty
               }
-              hinting={hintedItems.includes(label) && !selected.includes(label)}
+              hinting={
+                hintedItems?.includes(label) && !selected.includes(label)
+              }
             />
           ))}
 
@@ -265,7 +265,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
         </ConnectionsActionButton>
         <ConnectionsActionButton
           onClick={handleHintClick}
-          disabled={selected.length !== 0 || hintedItems.length !== 0}
+          disabled={selected.length !== 0 || hintedItems?.length !== 0}
         >
           Hint (-10pts)
         </ConnectionsActionButton>

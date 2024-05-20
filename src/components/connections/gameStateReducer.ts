@@ -13,6 +13,7 @@ export interface GameState {
   hintsUsed?: number;
   markedItems?: { label: string; difficulty: number }[];
   gameSummary?: number[][];
+  hintedItems?: string[];
 }
 
 export enum GameActionType {
@@ -30,7 +31,7 @@ export enum GameActionType {
 
 export type GameAction =
   | { type: GameActionType.SHUFFLE }
-  | { type: GameActionType.USE_HINT }
+  | { type: GameActionType.USE_HINT; payload: string[] }
   | { type: GameActionType.DESELECT_ALL }
   | { type: GameActionType.UNMARK_ALL }
   | {
@@ -82,6 +83,7 @@ export const gameStateReducer = (
         ...state,
         score: state.score - 10,
         hintsUsed: state.hintsUsed || 0 + 1,
+        hintedItems: action.payload,
       };
     case GameActionType.DESELECT_ALL:
       return {
@@ -183,6 +185,7 @@ export const gameStateReducer = (
         ...state,
         selected: [],
         completedGroups: [...state.completedGroups, action.payload],
+        hintedItems: [],
       };
     default:
       return state;
