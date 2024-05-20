@@ -3,6 +3,7 @@ import { shuffle } from "lodash";
 import { difficultyMultiplier, guessMultiplier } from "./util";
 
 export interface GameState {
+  date: string;
   selected: string[];
   correctGuesses: string[];
   incorrectGuesses: string[][];
@@ -27,6 +28,7 @@ export enum GameActionType {
   PUSH_INCORRECT_GUESS,
   PUSH_CORRECT_GUESS,
   PUSH_POST_CORRECT_GUESS,
+  LOAD_STATE,
 }
 
 export type GameAction =
@@ -60,130 +62,146 @@ export type GameAction =
   | {
       type: GameActionType.PUSH_POST_CORRECT_GUESS;
       payload: Category;
+    }
+  | {
+      type: GameActionType.LOAD_STATE;
+      payload: GameState;
     };
 
 export const gameStateReducer = (
   state: GameState,
   action: GameAction,
 ): GameState => {
-  switch (action.type) {
-    case GameActionType.SHUFFLE:
-      return {
-        ...state,
-        grid: [
-          ...state.grid.slice(0, state.correctGuesses.length),
-          ...shuffle(state.grid.slice(state.correctGuesses.length)),
-        ],
-      };
-    case GameActionType.USE_HINT:
-      return {
-        ...state,
-        score: state.score - 10,
-        hintsUsed: state.hintsUsed || 0 + 1,
-        hintedItems: action.payload,
-      };
-    case GameActionType.DESELECT_ALL:
-      return {
-        ...state,
-        selected: [],
-      };
-    case GameActionType.UNMARK_ALL:
-      return {
-        ...state,
-        markedItems: [],
-      };
-    case GameActionType.SELECT_ITEM: {
-      if (state.selected.includes(action.payload)) {
+  const newState = (() => {
+    switch (action.type) {
+      case GameActionType.SHUFFLE:
         return {
           ...state,
-          selected: state.selected.filter((l) => l !== action.payload),
+          grid: [
+            ...state.grid.slice(0, state.correctGuesses.length),
+            ...shuffle(state.grid.slice(state.correctGuesses.length)),
+          ],
         };
-      }
-      if (state.correctGuesses.includes(action.payload)) {
-        return state;
-      }
-      if (state.selected.length === 4) {
-        return state;
-      }
-      return {
-        ...state,
-        selected: [...state.selected, action.payload],
-      };
-    }
-    case GameActionType.MARK_ITEM: {
-      if (action.payload.difficulty === null) {
+      case GameActionType.USE_HINT:
         return {
           ...state,
-          markedItems: state.markedItems?.filter(
-            (item) => item.label !== action.payload.label,
-          ),
+          score: state.score - 10,
+          hintsUsed: state.hintsUsed || 0 + 1,
+          hintedItems: action.payload,
         };
-      }
-      if (
-        state.markedItems?.some((item) => item.label === action.payload.label)
-      ) {
+      case GameActionType.DESELECT_ALL:
         return {
           ...state,
-          markedItems: state.markedItems?.map((item) => {
-            if (item.label === action.payload.label) {
-              return {
-                label: item.label,
-                difficulty: action.payload.difficulty!,
-              };
-            }
-            return item;
-          }),
+          selected: [],
+        };
+      case GameActionType.UNMARK_ALL:
+        return {
+          ...state,
+          markedItems: [],
+        };
+      case GameActionType.SELECT_ITEM: {
+        if (state.selected.includes(action.payload)) {
+          return {
+            ...state,
+            selected: state.selected.filter((l) => l !== action.payload),
+          };
+        }
+        if (state.correctGuesses.includes(action.payload)) {
+          return state;
+        }
+        if (state.selected.length === 4) {
+          return state;
+        }
+        return {
+          ...state,
+          selected: [...state.selected, action.payload],
         };
       }
+      case GameActionType.MARK_ITEM: {
+        if (action.payload.difficulty === null) {
+          return {
+            ...state,
+            markedItems: state.markedItems?.filter(
+              (item) => item.label !== action.payload.label,
+            ),
+          };
+        }
+        if (
+          state.markedItems?.some((item) => item.label === action.payload.label)
+        ) {
+          return {
+            ...state,
+            markedItems: state.markedItems?.map((item) => {
+              if (item.label === action.payload.label) {
+                return {
+                  label: item.label,
+                  difficulty: action.payload.difficulty!,
+                };
+              }
+              return item;
+            }),
+          };
+        }
 
-      return {
-        ...state,
-        markedItems: [
-          ...(state.markedItems || []),
-          {
-            label: action.payload.label,
-            difficulty: action.payload.difficulty,
-          },
-        ],
-      };
+        return {
+          ...state,
+          markedItems: [
+            ...(state.markedItems || []),
+            {
+              label: action.payload.label,
+              difficulty: action.payload.difficulty,
+            },
+          ],
+        };
+      }
+      case GameActionType.PUSH_GAME_SUMMARY:
+        return {
+          ...state,
+          gameSummary: [...(state.gameSummary || []), action.payload],
+        };
+      case GameActionType.PUSH_INCORRECT_GUESS:
+        return {
+          ...state,
+          incorrectGuesses: [...state.incorrectGuesses, action.payload],
+          guessCount: state.guessCount + 1,
+        };
+      case GameActionType.PUSH_CORRECT_GUESS:
+        return {
+          ...state,
+          correctGuesses: [...state.correctGuesses, ...action.payload],
+          grid: [
+            ...state.correctGuesses,
+            ...action.payload,
+            ...state.grid.filter(
+              (l) =>
+                !action.payload.includes(l) &&
+                !state.correctGuesses.includes(l),
+            ),
+          ],
+        };
+      case GameActionType.PUSH_POST_CORRECT_GUESS:
+        return {
+          ...state,
+          selected: [],
+          hintedItems: [],
+          guessCount: state.guessCount + 1,
+          completedGroups: [...state.completedGroups, action.payload],
+          score:
+            state.score +
+            guessMultiplier[state.guessCount] *
+              difficultyMultiplier[action.payload.difficulty || 0],
+        };
+      case GameActionType.LOAD_STATE:
+        return action.payload;
+      default:
+        return state;
     }
-    case GameActionType.PUSH_GAME_SUMMARY:
-      return {
-        ...state,
-        gameSummary: [...(state.gameSummary || []), action.payload],
-      };
-    case GameActionType.PUSH_INCORRECT_GUESS:
-      return {
-        ...state,
-        incorrectGuesses: [...state.incorrectGuesses, action.payload],
-        guessCount: state.guessCount + 1,
-      };
-    case GameActionType.PUSH_CORRECT_GUESS:
-      return {
-        ...state,
-        correctGuesses: [...state.correctGuesses, ...action.payload],
-        grid: [
-          ...state.correctGuesses,
-          ...action.payload,
-          ...state.grid.filter(
-            (l) =>
-              !action.payload.includes(l) && !state.correctGuesses.includes(l),
-          ),
-        ],
-      };
-    case GameActionType.PUSH_POST_CORRECT_GUESS:
-      return {
-        ...state,
-        selected: [],
-        hintedItems: [],
-        guessCount: state.guessCount + 1,
-        completedGroups: [...state.completedGroups, action.payload],
-        score:
-          state.score +
-          guessMultiplier[state.guessCount] *
-            difficultyMultiplier[action.payload.difficulty || 0],
-      };
-    default:
-      return state;
-  }
+  })();
+
+  localStorage.setItem(
+    `connections-game-state-${state.date}`,
+    JSON.stringify(newState),
+  );
+
+  return newState;
 };

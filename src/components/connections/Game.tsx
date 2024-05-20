@@ -1,11 +1,11 @@
 "use client";
 
 import { cn } from "@/util";
-import React, { useReducer, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import lodashShuffle from "lodash/shuffle";
 import { ConnectionsActionButton } from "@/components/connections/ActionButton";
 import { Category } from "@/util/api/connections";
-import { intersection } from "lodash";
+import { intersection, isEmpty } from "lodash";
 import { ConnectionsItem } from "./Item";
 import { useLocalStorage } from "usehooks-ts";
 import { CompletedGroup } from "./CompletedGroup";
@@ -32,6 +32,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
   gameNumber,
 }) => {
   const initialGameState: GameState = {
+    date,
     selected: [],
     correctGuesses: [],
     incorrectGuesses: [],
@@ -61,6 +62,15 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     },
     gameDispatch,
   ] = useReducer(gameStateReducer, initialGameState);
+
+  useEffect(() => {
+    const savedState = JSON.parse(
+      localStorage.getItem(`connections-game-state-${date}`) || "{}",
+    );
+    if (!isEmpty(savedState)) {
+      gameDispatch({ type: GameActionType.LOAD_STATE, payload: savedState });
+    }
+  }, [date]);
 
   const [jigglingIncorrectItems, setJigglingIncorrectItems] = useState<
     string[]
