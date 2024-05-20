@@ -1,4 +1,11 @@
 import { cn } from "@/util";
+import {
+  faBurst,
+  faLightbulb,
+  faStar,
+  faStarHalfAlt,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { isNil } from "lodash";
 import React from "react";
 import { ConnectionsItemMenu } from "./ConnectionsItemMenu";
@@ -13,6 +20,7 @@ interface ConnectionsItemProps {
   completed?: boolean;
   jiggleIncorrect?: boolean;
   jiggleCorrect?: boolean;
+  hinting?: boolean;
   difficultyMark?: number | null;
 }
 
@@ -26,6 +34,7 @@ export const ConnectionsItem: React.FC<ConnectionsItemProps> = ({
   completed,
   jiggleIncorrect,
   jiggleCorrect,
+  hinting,
   difficultyMark,
 }) => {
   return (
@@ -69,7 +78,13 @@ export const ConnectionsItem: React.FC<ConnectionsItemProps> = ({
               },
             )}
           />
-          {label}
+          <div
+            className={cn({
+              "underline underline-offset-4": hinting,
+            })}
+          >
+            {label}
+          </div>
         </button>
       </div>
     </ConnectionsItemMenu>
