@@ -1,21 +1,18 @@
 "use client";
 
 import { cn } from "@/util";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import lodashShuffle from "lodash/shuffle";
 import { ConnectionsActionButton } from "@/components/connections/ActionButton";
 import { Category } from "@/util/api/connections";
-import { flatMap, intersection } from "lodash";
+import { intersection } from "lodash";
 import { ConnectionsItem } from "./Item";
 import { useLocalStorage } from "usehooks-ts";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClipboard } from "@fortawesome/free-regular-svg-icons";
-import { connectionsColors } from "./util";
-import { CopyButton } from "../CopyButton";
+import { CompletedGroup } from "./CompletedGroup";
+import { GameSummary } from "./GameSummary";
+import { difficultyMultiplier, guessMultiplier } from "./util";
+import { MistakesRemaining } from "./MistakesRemaining";
 
-const guessMultiplier = [1.771561, 1.61051, 1.4641, 1.331, 1.21, 1.1, 1];
-const difficultyMultiplier = [2, 8, 16, 34];
-const difficultyEmojiMap = ["🟨", "🟩", "🟦", "🟪"];
 interface GameState {
   selected: string[];
   correctGuesses: string[];
@@ -83,8 +80,6 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     [],
   );
   const [hintedItems, setHintedItems] = useState<string[]>([]);
-
-  const gameCompletedRef = useRef<HTMLDivElement>(null);
 
   const handleShuffleClick = () => {
     setGameState((prev) => ({
@@ -322,90 +317,22 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
           ))}
 
         {completedGroups.map((category) => (
-          <div
-            key={category.title}
-            className={cn(
-              `w-full p-1 uppercase h-1/4 animate-fadeIn animate-popIn`,
-            )}
-          >
-            <div
-              data-difficulty={category.difficulty}
-              className={cn(
-                "flex flex-col justify-center items-center relative z-10 text-center",
-                "h-full w-full rounded-md color-black tracking-wider",
-                `bg-${connectionsColors[category.difficulty || 0]}`,
-              )}
-            >
-              <p
-                className={cn("font-bold", {
-                  "text-xs": category.title.length > 30,
-                })}
-              >
-                {category.title}
-              </p>
-              <p>{category.cards.map((card) => card.content).join(", ")}</p>
-            </div>
-          </div>
+          <CompletedGroup category={category} />
         ))}
+
         {gameComplete && (
-          <div
-            ref={gameCompletedRef}
-            className={cn(
-              "rounded-md m-1 p-2 flex flex-col items-center justify-center relative",
-              "bg-gray-200 dark:bg-gray-800",
-              "animate-slideDown",
-            )}
-          >
-            <div className="absolute top-2 right-2">
-              <CopyButton
-                copyText={gameCompletedRef.current?.innerText.replaceAll(
-                  "\n\n",
-                  "\n",
-                )}
-              />
-            </div>
-            <p>Connections</p>
-            <p>Puzzle #{gameNumber - 13}</p>{" "}
-            {gameSummary && (
-              <div className="mb-2">
-                {gameSummary.map((category, i) => (
-                  <p key={`${i}`}>
-                    {category.map((summaryItem, j) => (
-                      <span key={`${i}-${j}`}>
-                        {difficultyEmojiMap[summaryItem]}
-                      </span>
-                    ))}
-                  </p>
-                ))}
-              </div>
-            )}
-            <p className="tracking-wider">
-              <span className="font-bold">
-                {Math.round(score) === 100 ? "💯" : Math.round(score)}
-              </span>{" "}
-              points in <span className="font-bold">{guessCount}</span> guesses
-              with <span className="font-bold">{hintsUsed}</span> hint
-              {hintsUsed !== 1 && "s"}
-            </p>
-          </div>
+          <GameSummary
+            gameNumber={gameNumber}
+            gameSummary={gameSummary}
+            guessCount={guessCount}
+            score={score}
+            hintsUsed={hintsUsed}
+          />
         )}
       </div>
       <div className="flex items-center gap-2">
         <p>Mistakes remaining:</p>
-        <div className="flex gap-2">
-          {Array(4)
-            .fill("")
-            .map((_, i) => (
-              <div
-                key={i}
-                className={cn("rounded-full w-4 h-4", {
-                  "bg-transparent": i >= Math.abs(incorrectGuesses.length - 4),
-                  "bg-connections-button-active dark:bg-white":
-                    i < Math.abs(incorrectGuesses.length - 4),
-                })}
-              />
-            ))}
-        </div>
+        <MistakesRemaining incorrectGuessCount={incorrectGuesses.length} />
       </div>
 
       <div
