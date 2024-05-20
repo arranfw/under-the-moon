@@ -71,11 +71,10 @@ export const ConnectionsItem: React.FC<ConnectionsItemProps> = ({
         >
           <span
             className={cn(
-              "absolute top-0 right-0 w-6 h-6 bg-white rounded-bl-md rounded-tr-md",
+              "absolute top-0 right-0 w-6 h-6 bg-white rounded-bl-md rounded-tr-md opacity-100 transition-all",
+              `bg-${connectionsColors[difficultyMark ?? 0]}`,
               {
-                [`bg-${connectionsColors[difficultyMark ?? 0]}`]:
-                  !isNil(difficultyMark),
-                "bg-connections-button dark:bg-gray-800": isNil(difficultyMark),
+                "opacity-0": isNil(difficultyMark),
                 "shadow-md": !isNil(difficultyMark),
               },
             )}

@@ -32,9 +32,9 @@ export const ConnectionsItemMenu: React.FC<ConnectionsItemMenuProps> = ({
   onClick,
 }) => (
   <ContextMenu.Root>
-    <ContextMenu.Trigger className="">{children}</ContextMenu.Trigger>
+    <ContextMenu.Trigger>{children}</ContextMenu.Trigger>
     <ContextMenu.Portal>
-      <ContextMenu.Content className="mt-2 rounded-md shadow-lg overflow-hidden text-black dark:text-white">
+      <ContextMenu.Content className="mt-2 rounded-md shadow-lg overflow-hidden">
         <ColorMenuItem onClick={onClick} difficulty={0}>
           Yellow
         </ColorMenuItem>

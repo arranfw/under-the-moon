@@ -337,7 +337,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
               data-difficulty={category.difficulty}
               className={cn(
                 "flex flex-col justify-center items-center relative z-10 text-center",
-                "h-full w-full rounded-md color-black tracking-wider text-black dark:text-white",
+                "h-full w-full rounded-md color-black tracking-wider",
                 `bg-${connectionsColors[category.difficulty || 0]}`,
               )}
             >
@@ -357,7 +357,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
             ref={gameCompletedRef}
             className={cn(
               "rounded-md m-1 p-2 flex flex-col items-center justify-center relative",
-              "bg-gray-200 dark:bg-gray-800 text-black dark:text-white",
+              "bg-gray-200 dark:bg-gray-800",
               "animate-slideDown",
             )}
           >
