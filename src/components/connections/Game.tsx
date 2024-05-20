@@ -171,10 +171,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
 
     gameDispatch({
       type: GameActionType.PUSH_CORRECT_GUESS,
-      payload: {
-        guess: currentGuess,
-        difficulty: completedGroup?.difficulty || 0,
-      },
+      payload: currentGuess,
     });
     await new Promise((resolve) => setTimeout(resolve, 600));
     if (completedGroup) {

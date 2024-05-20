@@ -55,10 +55,7 @@ export type GameAction =
     }
   | {
       type: GameActionType.PUSH_CORRECT_GUESS;
-      payload: {
-        guess: string[];
-        difficulty: number;
-      };
+      payload: string[];
     }
   | {
       type: GameActionType.PUSH_POST_CORRECT_GUESS;
@@ -164,28 +161,27 @@ export const gameStateReducer = (
     case GameActionType.PUSH_CORRECT_GUESS:
       return {
         ...state,
-        correctGuesses: [...state.correctGuesses, ...action.payload.guess],
-        guessCount: state.guessCount + 1,
+        correctGuesses: [...state.correctGuesses, ...action.payload],
         grid: [
           ...state.correctGuesses,
-          ...action.payload.guess,
+          ...action.payload,
           ...state.grid.filter(
             (l) =>
-              !action.payload.guess.includes(l) &&
-              !state.correctGuesses.includes(l),
+              !action.payload.includes(l) && !state.correctGuesses.includes(l),
           ),
         ],
-        score:
-          state.score +
-          guessMultiplier[state.guessCount] *
-            difficultyMultiplier[action.payload.difficulty || 0],
       };
     case GameActionType.PUSH_POST_CORRECT_GUESS:
       return {
         ...state,
         selected: [],
-        completedGroups: [...state.completedGroups, action.payload],
         hintedItems: [],
+        guessCount: state.guessCount + 1,
+        completedGroups: [...state.completedGroups, action.payload],
+        score:
+          state.score +
+          guessMultiplier[state.guessCount] *
+            difficultyMultiplier[action.payload.difficulty || 0],
       };
     default:
       return state;
