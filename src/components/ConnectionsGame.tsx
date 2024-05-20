@@ -335,7 +335,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
             <div
               data-difficulty={category.difficulty}
               className={cn(
-                "flex flex-col justify-center items-center relative z-10",
+                "flex flex-col justify-center items-center relative z-10 text-center",
                 "h-full w-full rounded-md color-black tracking-wider text-black dark:text-white",
                 {
                   "bg-connections-difficulty-0 dark:bg-connections-difficulty-0-dark":
@@ -349,12 +349,17 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
                 },
               )}
             >
-              <p className="font-bold">{category.title}</p>
+              <p
+                className={cn("font-bold", {
+                  "text-xs": category.title.length > 30,
+                })}
+              >
+                {category.title}
+              </p>
               <p>{category.cards.map((card) => card.content).join(", ")}</p>
             </div>
           </div>
         ))}
-
         {gameComplete && (
           <div
             ref={gameCompletedRef}
@@ -371,7 +376,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
               <FontAwesomeIcon icon={faClipboard} className="h-full w-full" />
             </button>
             <p>Connections</p>
-            <p>Puzzle #{gameNumber}</p>{" "}
+            <p>Puzzle #{gameNumber - 13}</p>{" "}
             {gameSummary && (
               <div className="mb-2">
                 {gameSummary.map((category, i) => (
