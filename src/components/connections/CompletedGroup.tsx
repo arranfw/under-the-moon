@@ -10,7 +10,6 @@ interface CompletedGroupProps {
 export const CompletedGroup: React.FC<CompletedGroupProps> = ({ category }) => {
   return (
     <div
-      key={category.title}
       className={cn(`w-full p-1 uppercase h-1/4 animate-fadeIn animate-popIn`)}
     >
       <div

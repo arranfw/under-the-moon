@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/util";
-import React, { useState } from "react";
+import React, { useReducer, useState } from "react";
 import lodashShuffle from "lodash/shuffle";
 import { ConnectionsActionButton } from "@/components/connections/ActionButton";
 import { Category } from "@/util/api/connections";
@@ -12,19 +12,11 @@ import { CompletedGroup } from "./CompletedGroup";
 import { GameSummary } from "./GameSummary";
 import { difficultyMultiplier, guessMultiplier } from "./util";
 import { MistakesRemaining } from "./MistakesRemaining";
-
-interface GameState {
-  selected: string[];
-  correctGuesses: string[];
-  incorrectGuesses: string[][];
-  completedGroups: Category[];
-  grid: string[];
-  score: number;
-  guessCount: number;
-  hintsUsed?: number;
-  markedItems?: { label: string; difficulty: number }[];
-  gameSummary?: number[][];
-}
+import {
+  GameActionType,
+  GameState,
+  gameStateReducer,
+} from "./gameStateReducer";
 
 interface ConnectionsGameProps {
   gameGrid: string[];
@@ -58,21 +50,16 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
       correctGuesses,
       incorrectGuesses,
       selected,
-      grid,
       score,
       guessCount,
       markedItems,
       hintsUsed,
       gameSummary,
+      grid,
     },
-    setGameState,
-  ] = useLocalStorage<GameState>(
-    `connections-game-state-${date}`,
-    initialGameState,
+    gameDispatch,
+  ] = useReducer(gameStateReducer, initialGameState);
 
-    { initializeWithValue: false },
-  );
-  const numberOfCorrectGuesses = correctGuesses.length;
   const [jigglingIncorrectItems, setJigglingIncorrectItems] = useState<
     string[]
   >([]);
@@ -82,13 +69,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
   const [hintedItems, setHintedItems] = useState<string[]>([]);
 
   const handleShuffleClick = () => {
-    setGameState((prev) => ({
-      ...prev,
-      grid: [
-        ...prev.grid.slice(0, numberOfCorrectGuesses),
-        ...lodashShuffle(prev.grid.slice(numberOfCorrectGuesses)),
-      ],
-    }));
+    gameDispatch({ type: GameActionType.SHUFFLE });
   };
 
   const handleHintClick = () => {
@@ -105,11 +86,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
       );
     }
 
-    setGameState((prev) => ({
-      ...prev,
-      score: prev.score - 10,
-      hintsUsed: prev.hintsUsed || 0 + 1,
-    }));
+    gameDispatch({ type: GameActionType.USE_HINT });
   };
 
   const getCorrectGuessCount = () => {
@@ -153,21 +130,20 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
         )?.difficulty!,
     );
 
-    setGameState((prev) => ({
-      ...prev,
-      gameSummary: [...(prev.gameSummary || []), fullGuess],
-    }));
+    gameDispatch({
+      type: GameActionType.PUSH_GAME_SUMMARY,
+      payload: fullGuess,
+    });
 
     if (correctGuessCount === 3) {
       window.alert("One away...");
     }
 
     if (!isCorrect) {
-      setGameState((prev) => ({
-        ...prev,
-        incorrectGuesses: [...prev.incorrectGuesses, currentGuess],
-        guessCount: prev.guessCount + 1,
-      }));
+      gameDispatch({
+        type: GameActionType.PUSH_INCORRECT_GUESS,
+        payload: currentGuess,
+      });
       setJigglingIncorrectItems(currentGuess);
       setTimeout(() => {
         setJigglingIncorrectItems([]);
@@ -175,13 +151,17 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
       return;
     }
 
-    const reorderedGrid = [
-      ...correctGuesses,
-      ...currentGuess,
-      ...grid.filter(
-        (l) => !currentGuess.includes(l) && !correctGuesses.includes(l),
-      ),
-    ];
+    currentGuess.forEach((guess, i) => {
+      setTimeout(() => {
+        setJigglingCorrectItems((prev) => [...prev, guess]);
+      }, i * 300);
+    });
+    setTimeout(() => {
+      setJigglingCorrectItems([]);
+    }, 1200);
+
+    await new Promise((resolve) => setTimeout(resolve, 1300));
+
     const completedGroup = categories.find(
       (category) =>
         intersection(
@@ -189,104 +169,41 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
           currentGuess,
         ).length === 4,
     );
-    setTimeout(() => {
-      setJigglingCorrectItems([currentGuess[0]]);
-    }, 0);
-    setTimeout(() => {
-      setJigglingCorrectItems((prev) => [...prev, currentGuess[1]]);
-    }, 300);
-    setTimeout(() => {
-      setJigglingCorrectItems((prev) => [...prev, currentGuess[2]]);
-    }, 600);
-    setTimeout(() => {
-      setJigglingCorrectItems((prev) => [...prev, currentGuess[3]]);
-    }, 900);
-    setTimeout(() => {
-      setJigglingCorrectItems([]);
-    }, 1200);
-    await new Promise((resolve) => setTimeout(resolve, 1300));
-    setGameState((prev) => ({
-      ...prev,
-      correctGuesses: [...prev.correctGuesses, ...currentGuess],
-      guessCount: prev.guessCount + 1,
-      grid: reorderedGrid,
-      score:
-        prev.score +
-        guessMultiplier[prev.guessCount] *
-          difficultyMultiplier[completedGroup?.difficulty || 0],
-    }));
+
+    gameDispatch({
+      type: GameActionType.PUSH_CORRECT_GUESS,
+      payload: {
+        guess: currentGuess,
+        difficulty: completedGroup?.difficulty || 0,
+      },
+    });
+    await new Promise((resolve) => setTimeout(resolve, 600));
     setHintedItems([]);
-    setTimeout(() => {
-      setGameState((prev) => {
-        return {
-          ...prev,
-          selected: [],
-          grid: reorderedGrid,
-          completedGroups: [...prev.completedGroups, completedGroup!],
-        };
+    if (completedGroup) {
+      gameDispatch({
+        type: GameActionType.PUSH_POST_CORRECT_GUESS,
+        payload: completedGroup,
       });
-    }, 600);
+    }
   };
 
   const handleDeselectAll = () => {
-    setGameState((prev) => ({
-      ...prev,
-      selected: [],
-    }));
+    gameDispatch({ type: GameActionType.DESELECT_ALL });
   };
 
   const handleUnmarkAll = () => {
-    setGameState((prev) => ({
-      ...prev,
-      markedItems: [],
-    }));
+    gameDispatch({ type: GameActionType.UNMARK_ALL });
   };
 
   const handleSelect = (label: string) => {
-    setGameState((prev) => {
-      if (prev.selected.includes(label)) {
-        return {
-          ...prev,
-          selected: prev.selected.filter((l) => l !== label),
-        };
-      }
-      if (prev.correctGuesses.includes(label)) {
-        return prev;
-      }
-      if (prev.selected.length === 4) {
-        return prev;
-      }
-      return {
-        ...prev,
-        selected: [...prev.selected, label],
-      };
-    });
+    gameDispatch({ type: GameActionType.SELECT_ITEM, payload: label });
   };
 
   const handleMarkItem = (label: string, difficulty: number | null) => {
-    if (difficulty === null) {
-      setGameState((prev) => ({
-        ...prev,
-        markedItems: prev.markedItems?.filter((item) => item.label !== label),
-      }));
-      return;
-    }
-    if (markedItems?.some((item) => item.label === label)) {
-      setGameState((prev) => ({
-        ...prev,
-        markedItems: prev.markedItems?.map((item) => {
-          if (item.label === label) {
-            return { label, difficulty };
-          }
-          return item;
-        }),
-      }));
-      return;
-    }
-    setGameState((prev) => ({
-      ...prev,
-      markedItems: [...(prev.markedItems || []), { label, difficulty }],
-    }));
+    gameDispatch({
+      type: GameActionType.MARK_ITEM,
+      payload: { label, difficulty },
+    });
   };
 
   const gameComplete =
@@ -317,7 +234,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
           ))}
 
         {completedGroups.map((category) => (
-          <CompletedGroup category={category} />
+          <CompletedGroup key={category.title} category={category} />
         ))}
 
         {gameComplete && (
