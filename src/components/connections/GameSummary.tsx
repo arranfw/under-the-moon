@@ -20,6 +20,10 @@ export const GameSummary: React.FC<GameSummaryProps> = ({
 }) => {
   const gameCompletedRef = useRef<HTMLDivElement>(null);
 
+  const getInnerText = () => {
+    return gameCompletedRef.current?.innerText.replaceAll("\n\n", "\n");
+  };
+
   return (
     <div
       ref={gameCompletedRef}
@@ -30,12 +34,7 @@ export const GameSummary: React.FC<GameSummaryProps> = ({
       )}
     >
       <div className="absolute top-2 right-2">
-        <CopyButton
-          copyText={gameCompletedRef.current?.innerText.replaceAll(
-            "\n\n",
-            "\n",
-          )}
-        />
+        <CopyButton getCopyText={getInnerText} />
       </div>
       <p>Connections</p>
       <p>Puzzle #{gameNumber - 13}</p>{" "}

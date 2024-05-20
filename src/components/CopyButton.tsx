@@ -8,13 +8,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 
 interface CopyButtonProps {
-  copyText: string | undefined;
+  getCopyText: () => string | undefined;
 }
 
-export const CopyButton: React.FC<CopyButtonProps> = ({ copyText }) => {
+export const CopyButton: React.FC<CopyButtonProps> = ({ getCopyText }) => {
   const [showSuccess, setShowSuccess] = useState(false);
 
   const handleCopySummary = () => {
+    const copyText = getCopyText();
+
     if (copyText) {
       navigator.clipboard.writeText(copyText);
       setShowSuccess(true);
