@@ -37,7 +37,7 @@ export const GameSummary: React.FC<GameSummaryProps> = ({
         <CopyButton getCopyText={getInnerText} />
       </div>
       <p>Connections</p>
-      <p>Puzzle #{gameNumber - 13}</p>{" "}
+      <p>Puzzle #{gameNumber}</p>{" "}
       {gameSummary && (
         <div className="mb-2">
           {gameSummary.map((category, i) => (

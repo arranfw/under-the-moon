@@ -1,5 +1,5 @@
 import { gameDataToGrid, getConnectionsData } from "@/util/api/connections";
-import { LocalDate } from "@js-joda/core";
+import { ChronoUnit, LocalDate } from "@js-joda/core";
 import "@js-joda/locale_en";
 import { ConnectionsGame } from "@/components/connections/Game";
 
@@ -21,9 +21,19 @@ const Connections = async ({ params }: { params: { date: string } }) => {
 
   const gameGrid = gameDataToGrid(gameData);
 
+  console.log(
+    ChronoUnit.DAYS.between(
+      LocalDate.parse("2023-06-11"),
+      LocalDate.parse(gameData.print_date),
+    ),
+  );
+
   return (
     <ConnectionsGame
-      gameNumber={gameData.id}
+      gameNumber={ChronoUnit.DAYS.between(
+        LocalDate.parse("2023-06-11"),
+        LocalDate.parse(gameData.print_date),
+      )}
       categories={gameData.categories}
       gameGrid={gameGrid}
       date={gameData.print_date}
