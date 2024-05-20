@@ -15,6 +15,10 @@ const config: Config = {
     "left-[25%]",
     "left-[50%]",
     "left-[75%]",
+    "bg-connections-yellow",
+    "bg-connections-green",
+    "bg-connections-blue",
+    "bg-connections-purple",
   ],
   theme: {
     extend: {
@@ -26,14 +30,10 @@ const config: Config = {
       backgroundColor: {
         "connections-button": "rgb(239, 239, 230)",
         "connections-button-active": "rgb(90, 89, 78)",
-        "connections-difficulty-0": "rgb(249, 223, 109)",
-        "connections-difficulty-1": "rgb(160, 195, 90)",
-        "connections-difficulty-2": "rgb(176, 196, 239)",
-        "connections-difficulty-3": "rgb(186, 129, 197)",
-        "connections-difficulty-0-dark": "rgb(143, 120, 19)",
-        "connections-difficulty-1-dark": "rgb(85, 122, 11)",
-        "connections-difficulty-2-dark": "rgb(26, 54, 115)",
-        "connections-difficulty-3-dark": "rgb(77, 14, 89)",
+        "connections-yellow": "rgb(var(--connections-yellow))",
+        "connections-green": "rgb(var(--connections-green))",
+        "connections-blue": "rgb(var(--connections-blue))",
+        "connections-purple": "rgb(var(--connections-purple))",
       },
       colors: {
         "connections-button": "rgb(0, 0, 0)",

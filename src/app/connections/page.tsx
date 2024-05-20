@@ -1,6 +1,6 @@
 "use client";
 
-import { PlayLink } from "./PlayLink";
+import { PlayLink } from "@/components/connections/PlayLink";
 
 const Connections = () => {
   return (

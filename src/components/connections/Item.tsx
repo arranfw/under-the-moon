@@ -8,7 +8,8 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { isNil } from "lodash";
 import React from "react";
-import { ConnectionsItemMenu } from "./ConnectionsItemMenu";
+import { ConnectionsItemMenu } from "./ItemMenu";
+import { connectionsColors } from "./util";
 
 interface ConnectionsItemProps {
   onClick: (label: string) => void;
@@ -71,9 +72,10 @@ export const ConnectionsItem: React.FC<ConnectionsItemProps> = ({
           <span
             className={cn(
               "absolute top-0 right-0 w-6 h-6 bg-white rounded-bl-md rounded-tr-md",
-              `bg-connections-difficulty-${difficultyMark}`,
-              `dark:bg-connections-difficulty-${difficultyMark}-dark`,
               {
+                [`bg-${connectionsColors[difficultyMark ?? 0]}`]:
+                  !isNil(difficultyMark),
+                "bg-connections-button dark:bg-gray-800": isNil(difficultyMark),
                 "shadow-md": !isNil(difficultyMark),
               },
             )}

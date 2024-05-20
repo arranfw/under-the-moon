@@ -3,13 +3,14 @@
 import { cn } from "@/util";
 import React, { useRef, useState } from "react";
 import lodashShuffle from "lodash/shuffle";
-import { ConnectionsActionButton } from "@/components/ConnectionsActionButton";
+import { ConnectionsActionButton } from "@/components/connections/ActionButton";
 import { Category } from "@/util/api/connections";
 import { flatMap, intersection } from "lodash";
-import { ConnectionsItem } from "./ConnectionsItem";
+import { ConnectionsItem } from "./Item";
 import { useLocalStorage } from "usehooks-ts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClipboard } from "@fortawesome/free-regular-svg-icons";
+import { connectionsColors } from "./util";
 
 const guessMultiplier = [1.771561, 1.61051, 1.4641, 1.331, 1.21, 1.1, 1];
 const difficultyMultiplier = [2, 8, 16, 34];
@@ -337,16 +338,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
               className={cn(
                 "flex flex-col justify-center items-center relative z-10 text-center",
                 "h-full w-full rounded-md color-black tracking-wider text-black dark:text-white",
-                {
-                  "bg-connections-difficulty-0 dark:bg-connections-difficulty-0-dark":
-                    category.difficulty === 0,
-                  "bg-connections-difficulty-1 dark:bg-connections-difficulty-1-dark":
-                    category.difficulty === 1,
-                  "bg-connections-difficulty-2 dark:bg-connections-difficulty-2-dark":
-                    category.difficulty === 2,
-                  "bg-connections-difficulty-3 dark:bg-connections-difficulty-3-dark":
-                    category.difficulty === 3,
-                },
+                `bg-${connectionsColors[category.difficulty || 0]}`,
               )}
             >
               <p

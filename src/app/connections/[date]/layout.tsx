@@ -1,4 +1,4 @@
-import { ConnectionsDateNavLink } from "@/components/ConnectionsDateNavLink";
+import { ConnectionsDateNavLink } from "@/components/connections/DateNavLink";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { DateTimeFormatter, LocalDate } from "@js-joda/core";
 import "@js-joda/locale_en";

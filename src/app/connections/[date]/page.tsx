@@ -1,7 +1,7 @@
 import { gameDataToGrid, getConnectionsData } from "@/util/api/connections";
 import { LocalDate } from "@js-joda/core";
 import "@js-joda/locale_en";
-import { ConnectionsGame } from "../../../components/ConnectionsGame";
+import { ConnectionsGame } from "@/components/connections/Game";
 
 const Connections = async ({ params }: { params: { date: string } }) => {
   const date =

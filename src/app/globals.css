@@ -6,6 +6,11 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+
+  --connections-yellow: 249, 223, 109;
+  --connections-green: 160, 195, 90;
+  --connections-blue: 176, 196, 239;
+  --connections-purple: 186, 129, 197;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -13,6 +18,11 @@
     --foreground-rgb: 255, 255, 255;
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
+
+    --connections-yellow:143, 120, 19;
+    --connections-green:85, 122, 11;
+    --connections-blue:26, 54, 115;
+    --connections-purple:77, 14, 89;
   }
 }
 
