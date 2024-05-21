@@ -21,13 +21,6 @@ const Connections = async ({ params }: { params: { date: string } }) => {
 
   const gameGrid = gameDataToGrid(gameData);
 
-  console.log(
-    ChronoUnit.DAYS.between(
-      LocalDate.parse("2023-06-11"),
-      LocalDate.parse(gameData.print_date),
-    ),
-  );
-
   return (
     <ConnectionsGame
       gameNumber={ChronoUnit.DAYS.between(
