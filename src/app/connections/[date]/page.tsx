@@ -20,12 +20,14 @@ const Connections = async ({ params }: { params: { date: string } }) => {
   const todayString = date.format(dayMonthYearFormatter);
 
   const gameData = await getConnectionsData(date);
-  const userResult = (
-    await getConnectionsResults({
-      date: params.date,
-      userId: session?.user?.id,
-    })
-  )[0];
+  const userResult = session?.user?.id
+    ? (
+        await getConnectionsResults({
+          date: params.date,
+          userId: session.user.id,
+        })
+      )[0]
+    : null;
 
   if (!gameData) {
     return (

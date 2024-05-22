@@ -2,6 +2,8 @@ import { cn } from "@/util";
 import React, { useRef } from "react";
 import { CopyButton } from "../CopyButton";
 import { difficultyEmojiMap } from "./util";
+import { useParams } from "next/navigation";
+import Link from "next/link";
 
 interface GameSummaryProps {
   gameNumber: number;
@@ -18,6 +20,8 @@ export const GameSummary: React.FC<GameSummaryProps> = ({
   guessCount,
   hintsUsed,
 }) => {
+  const { date } = useParams();
+
   const gameCompletedRef = useRef<HTMLDivElement>(null);
 
   const getInnerText = () => {
@@ -61,6 +65,16 @@ export const GameSummary: React.FC<GameSummaryProps> = ({
           {hintsUsed !== 1 && "s"}
         </p>
       </div>
+      <Link
+        className={cn(
+          "rounded-md m-1 p-2 flex flex-col items-center justify-center relative",
+          "bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700",
+          "animate-slideDown",
+        )}
+        href={`/connections/${date}/results`}
+      >
+        View other player&apos;s results for the day
+      </Link>
     </>
   );
 };

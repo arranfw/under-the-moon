@@ -16,13 +16,12 @@ import {
 } from "./gameStateReducer";
 import { gameDateToGameNumber } from "./util";
 import { ConnectionsResults, NewConnectionsResults } from "@/db/types";
-import Link from "next/link";
 
 interface ConnectionsGameProps {
   gameGrid: string[];
   categories: Category[];
   date: string;
-  userResult: ConnectionsResults | undefined;
+  userResult: ConnectionsResults | undefined | null;
   createConnectionsResult: (
     result: Omit<NewConnectionsResults, "userId">,
   ) => Promise<ConnectionsResults | undefined>;
@@ -296,17 +295,6 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
             hintsUsed={hintsUsed}
           />
         )}
-
-        <Link
-          className={cn(
-            "rounded-md m-1 mt-2 p-2 flex flex-col items-center justify-center relative",
-            "bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700",
-            "animate-slideDown",
-          )}
-          href={`/connections/${date}/results`}
-        >
-          View other player&apos;s results for the day
-        </Link>
       </div>
 
       <div className={cn("flex items-center gap-2", { hidden: gameComplete })}>

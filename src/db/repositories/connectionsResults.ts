@@ -10,7 +10,7 @@ export const getConnectionsResults = ({
   date: string;
   userId?: string;
 }) => {
-  const query = db
+  let query = db
     .selectFrom("ConnectionsResults")
     .selectAll("ConnectionsResults")
     .leftJoin("User", "ConnectionsResults.userId", "User.id")
@@ -18,7 +18,7 @@ export const getConnectionsResults = ({
     .where("date", "=", date);
 
   if (userId) {
-    query.where("ConnectionsResults.userId", "=", userId);
+    query = query.where("userId", "=", userId);
   }
 
   return query.execute();
