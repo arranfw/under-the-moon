@@ -2,35 +2,36 @@
 
 import { cn } from "@/util";
 import React, { useEffect, useReducer, useState } from "react";
-import lodashShuffle from "lodash/shuffle";
 import { ConnectionsActionButton } from "@/components/connections/ActionButton";
 import { Category } from "@/util/api/connections";
 import { intersection, isEmpty } from "lodash";
 import { ConnectionsItem } from "./Item";
-import { useLocalStorage } from "usehooks-ts";
 import { CompletedGroup } from "./CompletedGroup";
 import { GameSummary } from "./GameSummary";
-import { difficultyMultiplier, guessMultiplier } from "./util";
 import { MistakesRemaining } from "./MistakesRemaining";
 import {
   GameActionType,
   GameState,
   gameStateReducer,
 } from "./gameStateReducer";
-import { ChronoUnit, Duration, LocalDate, Period } from "@js-joda/core";
+import { gameDateToGameNumber } from "./util";
+import { LocalDate } from "@js-joda/core";
+import { ConnectionsResults, NewConnectionsResults } from "@/db/types";
 
 interface ConnectionsGameProps {
   gameGrid: string[];
   categories: Category[];
   date: string;
-  gameNumber: number;
+  createConnectionsResult: (
+    result: Omit<NewConnectionsResults, "userId">,
+  ) => Promise<ConnectionsResults | undefined>;
 }
 
 export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
   gameGrid,
   categories,
   date,
-  gameNumber,
+  createConnectionsResult,
 }) => {
   const initialGameState: GameState = {
     date,
@@ -63,6 +64,24 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     },
     gameDispatch,
   ] = useReducer(gameStateReducer, initialGameState);
+
+  const gameComplete =
+    completedGroups.length === categories.length ||
+    incorrectGuesses.length === 4;
+  const gameNumber = gameDateToGameNumber(date);
+
+  useEffect(() => {
+    if (gameComplete) {
+      createConnectionsResult({
+        date,
+        score: Math.round(score),
+        summary: gameSummary || [],
+        hintCount: hintsUsed || 0,
+        gameNumber,
+        guessCount: guessCount || 0,
+      });
+    }
+  }, [gameComplete]);
 
   useEffect(() => {
     const savedState = JSON.parse(
@@ -211,10 +230,6 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
       payload: { label, difficulty },
     });
   };
-
-  const gameComplete =
-    completedGroups.length === categories.length ||
-    incorrectGuesses.length === 4;
 
   return (
     <div className="flex flex-col items-center gap-4">

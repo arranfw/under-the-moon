@@ -1,12 +1,6 @@
-import { Pool, types } from "pg";
+import { Pool } from "pg";
 import { Kysely, PostgresDialect } from "kysely";
-import { LocalDate, ZonedDateTime } from "@js-joda/core";
 import { Database } from "./types";
-
-const { TIMESTAMP, TIMESTAMPTZ, DATE } = types.builtins;
-types.setTypeParser(TIMESTAMP, (val) => ZonedDateTime.parse(val));
-types.setTypeParser(TIMESTAMPTZ, (val) => ZonedDateTime.parse(val));
-types.setTypeParser(DATE, (val) => LocalDate.parse(val));
 
 export const pool = new Pool({
   host: process.env.DATABASE_HOST,

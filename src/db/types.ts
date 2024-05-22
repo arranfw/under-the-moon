@@ -1,37 +1,55 @@
-import { ZonedDateTime } from "@js-joda/core";
-import type { Generated } from "kysely";
+import type { Generated, Insertable, Selectable, Updateable } from "kysely";
+
+interface UserTable {
+  id: Generated<string>;
+  name: string | null;
+  email: string;
+  emailVerified: string | null;
+  image: string | null;
+}
+interface AccountTable {
+  id: Generated<string>;
+  userId: string;
+  type: string;
+  provider: string;
+  providerAccountId: string;
+  refresh_token: string | null;
+  access_token: string | null;
+  expires_at: number | null;
+  token_type: string | null;
+  scope: string | null;
+  id_token: string | null;
+  session_state: string | null;
+}
+interface SessionTable {
+  id: Generated<string>;
+  userId: string;
+  sessionToken: string;
+  expires: string;
+}
+interface VerificationTokenTable {
+  identifier: string;
+  token: string;
+  expires: string;
+}
+interface ConnectionsResultsTable {
+  id: Generated<string>;
+  userId: string;
+  summary: number[][];
+  score: number;
+  guessCount: number;
+  hintCount: number;
+  date: string;
+  gameNumber: number;
+}
+export type ConnectionsResults = Selectable<ConnectionsResultsTable>;
+export type NewConnectionsResults = Insertable<ConnectionsResultsTable>;
+export type ConnectionsResultsUpdate = Updateable<ConnectionsResultsTable>;
 
 export interface Database {
-  User: {
-    id: Generated<string>;
-    name: string | null;
-    email: string;
-    emailVerified: ZonedDateTime | null;
-    image: string | null;
-  };
-  Account: {
-    id: Generated<string>;
-    userId: string;
-    type: string;
-    provider: string;
-    providerAccountId: string;
-    refresh_token: string | null;
-    access_token: string | null;
-    expires_at: number | null;
-    token_type: string | null;
-    scope: string | null;
-    id_token: string | null;
-    session_state: string | null;
-  };
-  Session: {
-    id: Generated<string>;
-    userId: string;
-    sessionToken: string;
-    expires: ZonedDateTime;
-  };
-  VerificationToken: {
-    identifier: string;
-    token: string;
-    expires: ZonedDateTime;
-  };
+  User: UserTable;
+  Account: AccountTable;
+  Session: SessionTable;
+  VerificationToken: VerificationTokenTable;
+  ConnectionsResults: ConnectionsResultsTable;
 }
