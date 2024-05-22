@@ -14,7 +14,7 @@ export const NavSignInOut: React.FC<NavSignInOutProps> = ({ session }) => {
   if (session) {
     return (
       <div className="flex items-center gap-2">
-        <div>{session.user?.email || ""}</div>
+        <div>{session.user?.name || ""}</div>
         {session.user?.image && (
           <DropdownMenu.Root>
             <DropdownMenu.Trigger className="rounded-full">

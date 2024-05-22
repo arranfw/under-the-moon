@@ -57,26 +57,29 @@ const ConnectionsResults = async ({ params }: { params: { date: string } }) => {
         <div
           key={result.id}
           className={cn(
-            "rounded-md m-1 p-4 flex items-center justify-between relative",
+            "rounded-md m-1 p-4 flex items-center justify-between gap-4",
             "bg-gray-200 dark:bg-gray-800",
           )}
         >
-          <div className="flex flex-col justify-between gap-5">
+          <div className="flex flex-col gap-1">
             {result.name && <h2 className="font-bold">{result.name}</h2>}
-            <p className="tracking-wider">
+            <p>
+              Score:{" "}
               <span className="font-bold">
                 {Math.round(result.score) === 100
                   ? "💯"
                   : Math.round(result.score)}
-              </span>{" "}
-              points in <span className="font-bold">{result.guessCount}</span>{" "}
-              guesses with <span className="font-bold">{result.hintCount}</span>{" "}
-              hint
-              {result.hintCount !== 1 && "s"}
+              </span>
+            </p>
+            <p>
+              Guesses: <span className="font-bold">{result.guessCount}</span>
+            </p>
+            <p>
+              Hints: <span className="font-bold">{result.hintCount}</span>{" "}
             </p>
           </div>
           {result.summary && (
-            <div className="">
+            <div className="shrink-0">
               {result.summary.map((category, i) => (
                 <p key={`${i}`}>
                   {category.map((summaryItem, j) => (
