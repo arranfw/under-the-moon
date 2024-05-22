@@ -15,13 +15,14 @@ import {
   gameStateReducer,
 } from "./gameStateReducer";
 import { gameDateToGameNumber } from "./util";
-import { LocalDate } from "@js-joda/core";
 import { ConnectionsResults, NewConnectionsResults } from "@/db/types";
+import Link from "next/link";
 
 interface ConnectionsGameProps {
   gameGrid: string[];
   categories: Category[];
   date: string;
+  userResult: ConnectionsResults | undefined;
   createConnectionsResult: (
     result: Omit<NewConnectionsResults, "userId">,
   ) => Promise<ConnectionsResults | undefined>;
@@ -31,6 +32,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
   gameGrid,
   categories,
   date,
+  userResult,
   createConnectionsResult,
 }) => {
   const initialGameState: GameState = {
@@ -71,7 +73,32 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
   const gameNumber = gameDateToGameNumber(date);
 
   useEffect(() => {
-    if (gameComplete) {
+    if (userResult) {
+      gameDispatch({
+        type: GameActionType.LOAD_STATE,
+
+        payload: {
+          date,
+
+          correctGuesses,
+          incorrectGuesses,
+          selected,
+          markedItems,
+          grid,
+          hintedItems,
+
+          completedGroups: categories,
+          guessCount: userResult.guessCount,
+          gameSummary: userResult.summary,
+          hintsUsed: userResult.hintCount,
+          score: userResult.score,
+        },
+      });
+    }
+  }, [gameComplete]);
+
+  useEffect(() => {
+    if (gameComplete && !userResult) {
       createConnectionsResult({
         date,
         score: Math.round(score),
@@ -269,8 +296,20 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
             hintsUsed={hintsUsed}
           />
         )}
+
+        <Link
+          className={cn(
+            "rounded-md m-1 mt-2 p-2 flex flex-col items-center justify-center relative",
+            "bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700",
+            "animate-slideDown",
+          )}
+          href={`/connections/${date}/results`}
+        >
+          View other player&apos;s results for the day
+        </Link>
       </div>
-      <div className="flex items-center gap-2">
+
+      <div className={cn("flex items-center gap-2", { hidden: gameComplete })}>
         <p>Mistakes remaining:</p>
         <MistakesRemaining incorrectGuessCount={incorrectGuesses.length} />
       </div>

@@ -60,6 +60,7 @@ const Connections = async ({ params }: { params: { date: string } }) => {
         categories={gameData.categories}
         gameGrid={gameGrid}
         date={gameData.print_date}
+        userResult={userResult}
         createConnectionsResult={async (result) => {
           "use server";
           if (!session?.user?.id || userResult) {
