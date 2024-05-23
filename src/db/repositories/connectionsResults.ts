@@ -1,14 +1,23 @@
 "use server";
 
 import { db } from "..";
-import { NewConnectionsResults } from "../types";
+import { ConnectionsResults, NewConnectionsResults } from "../types";
+import {
+  OrderByDirection,
+  UndirectedOrderByExpression,
+} from "kysely/dist/cjs/parser/order-by-parser";
 
 export const getConnectionsResults = ({
   date,
   userId,
+  orderBy,
 }: {
   date: string;
   userId?: string;
+  orderBy?: {
+    column: keyof ConnectionsResults;
+    dir: OrderByDirection;
+  };
 }) => {
   let query = db
     .selectFrom("ConnectionsResults")
@@ -21,14 +30,28 @@ export const getConnectionsResults = ({
     query = query.where("userId", "=", userId);
   }
 
+  if (orderBy) {
+    query = query.orderBy(orderBy.column, orderBy.dir);
+  }
+
   return query.execute();
 };
 
-export const createConnectionsResult = (
+export const createConnectionsResult = async (
   connectionsResult: NewConnectionsResults,
-) =>
-  db
+) => {
+  const existingRecord = await getConnectionsResults({
+    date: connectionsResult.date,
+    userId: connectionsResult.userId,
+  });
+
+  if (existingRecord[0]) {
+    return existingRecord[0];
+  }
+
+  return db
     .insertInto("ConnectionsResults")
     .values(connectionsResult)
     .returningAll()
     .executeTakeFirstOrThrow();
+};

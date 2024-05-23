@@ -18,7 +18,13 @@ const ConnectionsResults = async ({ params }: { params: { date: string } }) => {
       : LocalDate.now();
   const todayString = date.format(dayMonthYearFormatter);
 
-  const results = await getConnectionsResults({ date: params.date });
+  const results = await getConnectionsResults({
+    date: params.date,
+    orderBy: {
+      column: "score",
+      dir: "desc",
+    },
+  });
 
   return (
     <>
