@@ -1,17 +1,26 @@
 import { auth } from "@/auth";
 import { ConnectionsDateNavLink } from "@/components/connections/DateNavLink";
 import { ConnectionsGame } from "@/components/connections/Game";
+import { gameDateToGameNumber } from "@/components/connections/util";
 import {
   createConnectionsResult,
   getConnectionsResults,
 } from "@/db/repositories";
+import { cn } from "@/util";
 import { gameDataToGrid, getConnectionsData } from "@/util/api/connections";
 import { dayMonthYearFormatter } from "@/util/date";
 
-import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import {
+  faAngleLeft,
+  faAngleRight,
+  faListSquares,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { LocalDate } from "@js-joda/core";
 
 import "@js-joda/locale_en";
+
+import Link from "next/link";
 
 const Connections = async ({ params }: { params: { date: string } }) => {
   const session = await auth();
@@ -58,7 +67,14 @@ const Connections = async ({ params }: { params: { date: string } }) => {
             icon={faAngleRight}
           />
         </div>
-        <p>Create four groups of four!</p>
+        <div className="grid grid-cols-3 w-full">
+          <Link className={cn("")} href={`/connections/${date}/results`}>
+            <FontAwesomeIcon icon={faListSquares} /> Leaderboard
+          </Link>
+          <p className="place-self-center">
+            Puzzle #{gameDateToGameNumber(params.date)}
+          </p>
+        </div>
       </div>
       <ConnectionsGame
         categories={gameData.categories}

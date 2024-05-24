@@ -67,16 +67,6 @@ export const GameSummary: React.FC<GameSummaryProps> = ({
           {hintsUsed !== 1 && "s"}
         </p>
       </div>
-      <Link
-        className={cn(
-          "rounded-md m-1 p-2 flex flex-col items-center justify-center relative",
-          "bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700",
-          "animate-slideDown",
-        )}
-        href={`/connections/${date}/results`}
-      >
-        View other player&apos;s results for the day
-      </Link>
     </>
   );
 };

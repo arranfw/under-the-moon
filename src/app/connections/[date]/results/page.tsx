@@ -7,14 +7,22 @@ import { getConnectionsResults } from "@/db/repositories";
 import { cn } from "@/util";
 import { dayMonthYearFormatter } from "@/util/date";
 
-import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import {
+  faAngleLeft,
+  faAngleRight,
+  faCrown,
+  faTableCellsLarge,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { LocalDate } from "@js-joda/core";
 
 import "@js-joda/locale_en";
 
+import React from "react";
+
 import Link from "next/link";
 
-const ConnectionsResults = async ({ params }: { params: { date: string } }) => {
+const Page = async ({ params }: { params: { date: string } }) => {
   const date =
     typeof params.date === "string"
       ? LocalDate.parse(params.date)
@@ -46,30 +54,38 @@ const ConnectionsResults = async ({ params }: { params: { date: string } }) => {
             icon={faAngleRight}
           />
         </div>
-        <p>Puzzle #{gameDateToGameNumber(params.date)}</p>{" "}
+        <div className="grid grid-cols-3 w-full">
+          <Link
+            className={cn("places-self-start", "")}
+            href={`/connections/${date}`}
+          >
+            <FontAwesomeIcon icon={faTableCellsLarge} /> Back to game
+          </Link>
+          <p className="place-self-center">
+            Puzzle #{gameDateToGameNumber(params.date)}
+          </p>{" "}
+        </div>
       </div>
-      <Link
-        className={cn(
-          "rounded-md m-1 p-2 flex flex-col items-center justify-center relative",
-          "bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700",
-        )}
-        href={`/connections/${date}`}
-      >
-        Back to game
-      </Link>
+
       {results.length === 0 && (
         <div className="w-full h-56 grid place-content-center text-xl">
           No results yet!
         </div>
       )}
-      {results.map((result) => (
+      {results.map((result, i) => (
         <div
           key={result.id}
           className={cn(
-            "rounded-md m-1 p-4 flex items-center justify-between gap-4",
+            "rounded-md m-1 p-4 flex items-center justify-between gap-4 relative",
             "bg-gray-200 dark:bg-gray-800",
           )}
         >
+          {i === 0 && (
+            <FontAwesomeIcon
+              className="absolute -top-2 -left-2 text-yellow-400 -rotate-45"
+              icon={faCrown}
+            />
+          )}
           <div className="flex flex-col gap-1">
             {result.name && <h2 className="font-bold">{result.name}</h2>}
             <p>
@@ -106,4 +122,4 @@ const ConnectionsResults = async ({ params }: { params: { date: string } }) => {
   );
 };
 
-export default ConnectionsResults;
+export default Page;
