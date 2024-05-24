@@ -19,17 +19,17 @@ export interface GameState {
 }
 
 export enum GameActionType {
-  SHUFFLE,
-  USE_HINT,
-  DESELECT_ALL,
-  UNMARK_ALL,
-  SELECT_ITEM,
-  MARK_ITEM,
-  PUSH_GAME_SUMMARY,
-  PUSH_INCORRECT_GUESS,
-  PUSH_CORRECT_GUESS,
-  PUSH_POST_CORRECT_GUESS,
-  LOAD_STATE,
+  SHUFFLE = "SHUFFLE",
+  USE_HINT = "USE_HINT",
+  DESELECT_ALL = "DESELECT_ALL",
+  UNMARK_ALL = "UNMARK_ALL",
+  SELECT_ITEM = "SELECT_ITEM",
+  MARK_ITEM = "MARK_ITEM",
+  PUSH_GAME_SUMMARY = "PUSH_GAME_SUMMARY",
+  PUSH_INCORRECT_GUESS = "PUSH_INCORRECT_GUESS",
+  PUSH_CORRECT_GUESS = "PUSH_CORRECT_GUESS",
+  PUSH_POST_CORRECT_GUESS = "PUSH_POST_CORRECT_GUESS",
+  LOAD_STATE = "LOAD_STATE",
 }
 
 export type GameAction =
@@ -73,6 +73,8 @@ export const gameStateReducer = (
   state: GameState,
   action: GameAction,
 ): GameState => {
+  console.log("Connections game state action: ", action);
+
   const newState = (() => {
     switch (action.type) {
       case GameActionType.SHUFFLE:

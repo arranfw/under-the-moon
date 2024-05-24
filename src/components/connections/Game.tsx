@@ -74,6 +74,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
   const gameNumber = gameDateToGameNumber(date);
 
   useEffect(() => {
+    // pull game state from database if it exists, otherwise load from local storage
     if (userResult) {
       gameDispatch({
         type: GameActionType.LOAD_STATE,
@@ -95,8 +96,15 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
           score: userResult.score,
         },
       });
+    } else {
+      const savedState = JSON.parse(
+        localStorage.getItem(`connections-game-state-${date}`) || "{}",
+      );
+      if (!isEmpty(savedState)) {
+        gameDispatch({ type: GameActionType.LOAD_STATE, payload: savedState });
+      }
     }
-  }, [gameComplete]);
+  }, [gameComplete, userResult]);
 
   useEffect(() => {
     if (gameComplete && !userResult) {
@@ -110,15 +118,6 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
       });
     }
   }, [gameComplete]);
-
-  useEffect(() => {
-    const savedState = JSON.parse(
-      localStorage.getItem(`connections-game-state-${date}`) || "{}",
-    );
-    if (!isEmpty(savedState)) {
-      gameDispatch({ type: GameActionType.LOAD_STATE, payload: savedState });
-    }
-  }, [date]);
 
   const [jigglingIncorrectItems, setJigglingIncorrectItems] = useState<
     string[]
