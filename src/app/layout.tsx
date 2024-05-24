@@ -28,9 +28,9 @@ export default async function RootLayout({
     <html lang="en" className="h-full">
       <body className={cn(inter.className, "h-full")}>
         <nav className="flex justify-between items-center p-4 sticky top-0">
-          <div className="flex gap-2">
+          <div className="flex items-center justify-center gap-4">
             <NavMenu />
-            <h1>Under the Moon</h1>
+            <h1 className="font-semibold">Under the Moon</h1>
           </div>
           <div>
             <NavSignInOut session={session} />

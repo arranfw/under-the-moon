@@ -30,12 +30,16 @@ export const NavSignInOut: React.FC<NavSignInOutProps> = ({ session }) => {
             <DropdownMenu.Portal>
               <DropdownMenu.Content
                 collisionPadding={20}
-                className="mt-2 rounded-md shadow-lg overflow-hidden"
+                className={cn(
+                  "mt-2 rounded-md shadow-md overflow-hidden p-2 w-32",
+                  "bg-zinc-50 dark:bg-zinc-900",
+                )}
               >
                 <DropdownMenu.Item
                   onClick={() => signOut()}
                   className={cn(
-                    "py-1 pl-4 pr-8 hover:brightness-110 cursor-pointer bg-connections-button dark:bg-gray-800",
+                    "px-2 py-1 rounded cursor-pointer ",
+                    "hover:bg-slate-200 hover:dark:bg-zinc-700",
                   )}
                 >
                   Sign Out
