@@ -1,21 +1,23 @@
 "use client";
 
-import { cn } from "@/util";
 import React, { useEffect, useReducer, useState } from "react";
+
 import { ConnectionsActionButton } from "@/components/connections/ActionButton";
+import { ConnectionsResults, NewConnectionsResults } from "@/db/types";
+import { cn } from "@/util";
 import { Category } from "@/util/api/connections";
-import { intersection, isEmpty } from "lodash";
-import { ConnectionsItem } from "./Item";
+
 import { CompletedGroup } from "./CompletedGroup";
-import { GameSummary } from "./GameSummary";
-import { MistakesRemaining } from "./MistakesRemaining";
 import {
   GameActionType,
   GameState,
   gameStateReducer,
 } from "./gameStateReducer";
+import { GameSummary } from "./GameSummary";
+import { ConnectionsItem } from "./Item";
+import { MistakesRemaining } from "./MistakesRemaining";
 import { gameDateToGameNumber } from "./util";
-import { ConnectionsResults, NewConnectionsResults } from "@/db/types";
+import { intersection, isEmpty } from "lodash";
 
 interface ConnectionsGameProps {
   gameGrid: string[];

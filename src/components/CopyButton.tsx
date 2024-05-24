@@ -1,11 +1,13 @@
+import React, { useState } from "react";
+
 import { cn } from "@/util";
+
 import {
   faCheck,
   faCheckCircle,
   faClipboard,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState } from "react";
 
 interface CopyButtonProps {
   getCopyText: () => string | undefined;

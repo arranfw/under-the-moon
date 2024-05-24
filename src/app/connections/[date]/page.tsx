@@ -1,15 +1,17 @@
-import { gameDataToGrid, getConnectionsData } from "@/util/api/connections";
-import { LocalDate } from "@js-joda/core";
-import "@js-joda/locale_en";
-import { ConnectionsGame } from "@/components/connections/Game";
+import { auth } from "@/auth";
 import { ConnectionsDateNavLink } from "@/components/connections/DateNavLink";
-import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
-import { dayMonthYearFormatter } from "@/util/date";
+import { ConnectionsGame } from "@/components/connections/Game";
 import {
   createConnectionsResult,
   getConnectionsResults,
 } from "@/db/repositories";
-import { auth } from "@/auth";
+import { gameDataToGrid, getConnectionsData } from "@/util/api/connections";
+import { dayMonthYearFormatter } from "@/util/date";
+
+import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import { LocalDate } from "@js-joda/core";
+
+import "@js-joda/locale_en";
 
 const Connections = async ({ params }: { params: { date: string } }) => {
   const session = await auth();

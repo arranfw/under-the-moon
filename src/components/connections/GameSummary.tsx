@@ -1,9 +1,11 @@
-import { cn } from "@/util";
 import React, { useRef } from "react";
+
+import { cn } from "@/util";
+
 import { CopyButton } from "../CopyButton";
 import { difficultyEmojiMap } from "./util";
-import { useParams } from "next/navigation";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 
 interface GameSummaryProps {
   gameNumber: number;

@@ -1,6 +1,8 @@
 import React from "react";
+
 import { cn } from "@/util";
 import { Category } from "@/util/api/connections";
+
 import { connectionsColors } from "./util";
 
 interface CompletedGroupProps {

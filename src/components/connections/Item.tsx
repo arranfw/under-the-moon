@@ -1,4 +1,9 @@
+import React from "react";
+
 import { cn } from "@/util";
+
+import { ConnectionsItemMenu } from "./ItemMenu";
+import { connectionsColors } from "./util";
 import {
   faBurst,
   faLightbulb,
@@ -7,9 +12,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { isNil } from "lodash";
-import React from "react";
-import { ConnectionsItemMenu } from "./ItemMenu";
-import { connectionsColors } from "./util";
 
 interface ConnectionsItemProps {
   onClick: (label: string) => void;

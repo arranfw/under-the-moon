@@ -1,5 +1,6 @@
-import { cn } from "@/util";
 import React from "react";
+
+import { cn } from "@/util";
 
 interface MistakesRemainingProps {
   incorrectGuessCount: number;

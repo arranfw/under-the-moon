@@ -1,6 +1,7 @@
 import { Category } from "@/util/api/connections";
-import { shuffle } from "lodash";
+
 import { difficultyMultiplier, guessMultiplier } from "./util";
+import { shuffle } from "lodash";
 
 export interface GameState {
   date: string;

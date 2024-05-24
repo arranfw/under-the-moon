@@ -1,10 +1,14 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { cn } from "@/util";
-import "@fortawesome/fontawesome-svg-core/styles.css";
 import { auth } from "@/auth";
 import { NavSignInOut } from "@/components/auth/NavSignInOut";
+import { NavMenu } from "@/components/NavMenu";
+import { cn } from "@/util";
+
+import "@fortawesome/fontawesome-svg-core/styles.css";
+
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,8 +27,11 @@ export default async function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body className={cn(inter.className, "h-full")}>
-        <nav className="flex justify-between p-4 sticky top-0">
-          <h1>Under the Moon</h1>
+        <nav className="flex justify-between items-center p-4 sticky top-0">
+          <div className="flex gap-2">
+            <NavMenu />
+            <h1>Under the Moon</h1>
+          </div>
           <div>
             <NavSignInOut session={session} />
           </div>

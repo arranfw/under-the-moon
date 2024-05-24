@@ -19,16 +19,16 @@
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
 
-    --connections-yellow:143, 120, 19;
-    --connections-green:85, 122, 11;
-    --connections-blue:26, 54, 115;
-    --connections-purple:77, 14, 89;
+    --connections-yellow: 143, 120, 19;
+    --connections-green: 85, 122, 11;
+    --connections-blue: 26, 54, 115;
+    --connections-purple: 77, 14, 89;
   }
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-end-rgb))
+  background: rgb(var(--background-end-rgb));
 }
 
 @layer utilities {
@@ -38,7 +38,8 @@ body {
 }
 
 button {
-  transition: color 75ms ease-in-out,
+  transition:
+    color 75ms ease-in-out,
     background-color 75ms ease-in-out,
     opacity 250ms ease-in-out 250ms,
     transform 75ms ease-in-out;

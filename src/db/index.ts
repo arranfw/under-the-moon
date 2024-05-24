@@ -1,6 +1,6 @@
-import { Pool } from "pg";
-import { Kysely, PostgresDialect } from "kysely";
 import { Database } from "./types";
+import { Kysely, PostgresDialect } from "kysely";
+import { Pool } from "pg";
 
 export const pool = new Pool({
   host: process.env.DATABASE_HOST || "127.0.0.1",

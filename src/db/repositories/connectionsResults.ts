@@ -2,10 +2,7 @@
 
 import { db } from "..";
 import { ConnectionsResults, NewConnectionsResults } from "../types";
-import {
-  OrderByDirection,
-  UndirectedOrderByExpression,
-} from "kysely/dist/cjs/parser/order-by-parser";
+import { OrderByDirection } from "kysely/dist/cjs/parser/order-by-parser";
 
 export const getConnectionsResults = ({
   date,

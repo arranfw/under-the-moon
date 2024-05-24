@@ -1,8 +1,10 @@
+import React from "react";
+
 import { cn } from "@/util";
+
+import { connectionsColors } from "./util";
 import * as ContextMenu from "@radix-ui/react-context-menu";
 import { isNil } from "lodash";
-import React from "react";
-import { connectionsColors } from "./util";
 
 interface ColorMenuItemProps extends React.PropsWithChildren {
   difficulty: number | null;

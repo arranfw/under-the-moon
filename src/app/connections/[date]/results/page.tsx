@@ -1,14 +1,17 @@
-import { LocalDate } from "@js-joda/core";
-import "@js-joda/locale_en";
-import { getConnectionsResults } from "@/db/repositories";
 import { ConnectionsDateNavLink } from "@/components/connections/DateNavLink";
-import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
-import { dayMonthYearFormatter } from "@/util/date";
-import { cn } from "@/util";
 import {
   difficultyEmojiMap,
   gameDateToGameNumber,
 } from "@/components/connections/util";
+import { getConnectionsResults } from "@/db/repositories";
+import { cn } from "@/util";
+import { dayMonthYearFormatter } from "@/util/date";
+
+import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import { LocalDate } from "@js-joda/core";
+
+import "@js-joda/locale_en";
+
 import Link from "next/link";
 
 const ConnectionsResults = async ({ params }: { params: { date: string } }) => {

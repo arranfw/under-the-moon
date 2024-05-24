@@ -1,4 +1,5 @@
 import { NewConnectionsResults } from "@/db/types";
+
 import { ChronoUnit, LocalDate } from "@js-joda/core";
 
 export const connectionsColors = [

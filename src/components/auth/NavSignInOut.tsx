@@ -1,10 +1,12 @@
 "use client";
 
 import React from "react";
+
+import { cn } from "@/util";
+
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import type { Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { cn } from "@/util";
 
 interface NavSignInOutProps {
   session: Session | null;
