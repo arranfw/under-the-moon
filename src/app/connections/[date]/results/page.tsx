@@ -77,13 +77,14 @@ const Page = async ({ params }: { params: { date: string } }) => {
           key={result.id}
           className={cn(
             "rounded-md m-1 p-4 flex items-center justify-between gap-4 relative",
-            "bg-gray-200 dark:bg-gray-800",
+            "bg-zinc-50 border-zinc-100 border-opacity-50 bg-opacity-30 dark:bg-zinc-900 border dark:border-zinc-800",
           )}
         >
-          {i === 0 && (
+          {(i === 0 || Math.round(result.score) === 100) && (
             <FontAwesomeIcon
-              className="absolute -top-2 -left-2 text-yellow-400 -rotate-45"
+              className="absolute -top-3 -left-3 text-yellow-600  -rotate-45"
               icon={faCrown}
+              fontSize={20}
             />
           )}
           <div className="flex flex-col gap-1">
