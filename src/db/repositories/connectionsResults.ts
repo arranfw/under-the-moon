@@ -29,6 +29,7 @@ export const getConnectionsResults = ({
 
   if (orderBy) {
     query = query.orderBy(orderBy.column, orderBy.dir);
+    query = query.orderBy("createdAt", "asc");
   }
 
   return query.execute();

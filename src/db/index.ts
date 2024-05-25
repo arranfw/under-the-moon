@@ -1,6 +1,11 @@
 import { Database } from "./types";
+import { ZonedDateTime } from "@js-joda/core";
 import { Kysely, PostgresDialect } from "kysely";
-import { Pool } from "pg";
+import { Pool, types } from "pg";
+
+types.setTypeParser(types.builtins.TIMESTAMP, (val) =>
+  ZonedDateTime.parse(val.split(" ").join("T") + "Z").toJSON(),
+);
 
 export const pool = new Pool({
   host: process.env.DATABASE_HOST || "127.0.0.1",

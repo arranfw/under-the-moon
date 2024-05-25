@@ -25,7 +25,7 @@ interface ConnectionsGameProps {
   date: string;
   userResult: ConnectionsResults | undefined | null;
   createConnectionsResult: (
-    result: Omit<NewConnectionsResults, "userId">,
+    result: Omit<NewConnectionsResults, "userId" | "createdAt">,
   ) => Promise<ConnectionsResults | undefined>;
 }
 

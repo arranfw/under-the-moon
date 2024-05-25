@@ -1,4 +1,5 @@
 import type { Generated, Insertable, Selectable, Updateable } from "kysely";
+import { Nullable } from "kysely/dist/cjs/util/type-utils";
 
 interface UserTable {
   id: Generated<string>;
@@ -41,6 +42,7 @@ interface ConnectionsResultsTable {
   hintCount: number;
   date: string;
   gameNumber: number;
+  createdAt: string | null;
 }
 export type ConnectionsResults = Selectable<ConnectionsResultsTable>;
 export type NewConnectionsResults = Insertable<ConnectionsResultsTable>;

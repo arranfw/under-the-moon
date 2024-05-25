@@ -5,7 +5,11 @@ import {
 } from "@/components/connections/util";
 import { getConnectionsResults } from "@/db/repositories";
 import { cn } from "@/util";
-import { dayMonthYearFormatter } from "@/util/date";
+import {
+  dayMonthYearFormatter,
+  LocalDateShortTime,
+  shortTimeFormatter,
+} from "@/util/date";
 
 import {
   faAngleLeft,
@@ -14,7 +18,7 @@ import {
   faTableCellsLarge,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { LocalDate } from "@js-joda/core";
+import { LocalDate, ZonedDateTime, ZoneId } from "@js-joda/core";
 
 import "@js-joda/locale_en";
 
@@ -103,6 +107,14 @@ const Page = async ({ params }: { params: { date: string } }) => {
             <p>
               Hints: <span className="font-bold">{result.hintCount}</span>{" "}
             </p>
+            {result.createdAt && (
+              <p>
+                Time:{" "}
+                <span className="font-bold">
+                  <LocalDateShortTime date={result.createdAt} />
+                </span>
+              </p>
+            )}
           </div>
           {result.summary && (
             <div className="shrink-0">
