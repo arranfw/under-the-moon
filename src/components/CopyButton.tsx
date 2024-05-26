@@ -2,11 +2,8 @@ import React, { useState } from "react";
 
 import { cn } from "@/util";
 
-import {
-  faCheck,
-  faCheckCircle,
-  faClipboard,
-} from "@fortawesome/free-solid-svg-icons";
+import { faClipboard } from "@fortawesome/free-regular-svg-icons";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface CopyButtonProps {
@@ -24,7 +21,7 @@ export const CopyButton: React.FC<CopyButtonProps> = ({ getCopyText }) => {
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);
-      }, 1000);
+      }, 600);
     }
   };
 
@@ -32,9 +29,10 @@ export const CopyButton: React.FC<CopyButtonProps> = ({ getCopyText }) => {
     <button className="h-8 w-8 rounded-full" onClick={handleCopySummary}>
       <FontAwesomeIcon
         icon={showSuccess ? faCheck : faClipboard}
-        className={cn("h-full w-full", {
+        className={cn("", {
           "text-green-500 animate-ping": showSuccess,
         })}
+        fontSize={18}
       />
     </button>
   );
