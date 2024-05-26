@@ -8,6 +8,8 @@ import { cn } from "@/util";
 import { ChronoField, LocalDate } from "@js-joda/core";
 import { partition, times } from "lodash";
 
+export const revalidate = 60;
+
 interface PageProps {}
 
 const Page: React.FC<PageProps> = async () => {
