@@ -31,6 +31,11 @@ const Page: React.FC<PageProps> = async () => {
       (result) => LocalDate.parse(result.date).toJSON() === date.toJSON(),
     )[0];
 
+  console.log(
+    now,
+    times(resultDays).map((day) => now.minusDays(day)),
+  );
+
   return (
     <>
       <div className="w-full flex justify-center mb-6">
