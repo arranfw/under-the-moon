@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 import { cn } from "@/util";
 
@@ -14,10 +14,18 @@ export const Tooltip: React.FC<TooltipProps> = ({
   tooltipContent,
   children,
 }) => {
+  const [open, setOpen] = useState(false);
+
   return (
     <RadixTooltip.Provider>
-      <RadixTooltip.Root>
-        <RadixTooltip.Trigger>{children}</RadixTooltip.Trigger>
+      <RadixTooltip.Root open={open} onOpenChange={setOpen}>
+        <RadixTooltip.Trigger
+          onClick={() => setOpen((prevOpen) => !prevOpen)}
+          onFocus={() => setTimeout(() => setOpen(true), 0)} // timeout needed to run this after onOpenChange to prevent bug on mobile
+          onBlur={() => setOpen(false)}
+        >
+          {children}
+        </RadixTooltip.Trigger>
         <RadixTooltip.Portal>
           <RadixTooltip.Content
             className={cn(
