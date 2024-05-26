@@ -3,6 +3,8 @@ import { NavSignInOut } from "@/components/auth/NavSignInOut";
 import { NavMenu } from "@/components/NavMenu";
 import { cn } from "@/util";
 
+import { SpeedInsights } from "@vercel/speed-insights/next";
+
 import "@fortawesome/fontawesome-svg-core/styles.css";
 
 import type { Metadata } from "next";
@@ -42,7 +44,10 @@ export default async function RootLayout({
           </div>
         </nav>
         <main className=" overflow-y-auto">
-          <div className="md:p-12 p-4 py-6">{children}</div>
+          <div className="md:p-12 p-4 py-6">
+            {children}
+            <SpeedInsights />
+          </div>
         </main>
       </body>
     </html>
