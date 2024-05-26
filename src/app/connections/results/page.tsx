@@ -2,9 +2,14 @@ import React from "react";
 
 import { Avatar } from "@/components/Avatar";
 import { Tooltip } from "@/components/ToolTip";
-import { getConnectionsResults } from "@/db/repositories";
+import {
+  getConnectionsResults,
+  getConnectionsStreaks,
+} from "@/db/repositories";
 import { cn } from "@/util";
 
+import { faFire } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ChronoField, LocalDate } from "@js-joda/core";
 import { partition, times } from "lodash";
 
@@ -24,6 +29,7 @@ const Page: React.FC<PageProps> = async () => {
       start: now.minusDays(resultDays).toJSON(),
     },
   });
+  const streaks = await getConnectionsStreaks(now.toJSON());
 
   const resultsForDay = (date: LocalDate) =>
     partition(
@@ -32,7 +38,7 @@ const Page: React.FC<PageProps> = async () => {
     )[0];
 
   return (
-    <>
+    <div className="flex flex-col gap-4">
       <div className="w-full flex justify-center mb-6">
         <p className="text-lg">Recent results</p>
       </div>
@@ -91,7 +97,20 @@ const Page: React.FC<PageProps> = async () => {
           </div>
         ))}
       </div>
-    </>
+      <div className="w-full flex flex-col justify-center mb-6">
+        <h2 className="text-lg place-self-center">Streaks (beta)</h2>
+        <div className="flex flex-col items-start">
+          {streaks.map((streak) => (
+            <div key={streak.name} className="flex gap-2">
+              <p>
+                {streak.date === now.toJSON() ? "🔥" : "⌛"} {streak.streak}
+              </p>
+              <p>{streak.name}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 };
 

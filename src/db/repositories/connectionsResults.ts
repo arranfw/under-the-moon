@@ -2,6 +2,7 @@
 
 import { db } from "..";
 import { ConnectionsResults, NewConnectionsResults } from "../types";
+import { LocalDate } from "@js-joda/core";
 import { OrderByDirection } from "kysely/dist/cjs/parser/order-by-parser";
 
 export const getConnectionsResults = ({
@@ -49,21 +50,54 @@ export const getConnectionsResults = ({
   return query.execute();
 };
 
+export const getConnectionsStreaks = (date: string) =>
+  db
+    .selectFrom("ConnectionsResults")
+    .leftJoin("User", "ConnectionsResults.userId", "User.id")
+    .select(({ fn }) => [
+      "userId",
+      "User.name",
+      "User.image",
+      fn.agg<string>("max", ["ConnectionsResults.streak"]).as("streak"),
+      fn.agg<string>("max", ["ConnectionsResults.date"]).as("date"),
+    ])
+    .where("ConnectionsResults.streak", ">=", 3)
+    .groupBy(["userId", "User.name", "User.image"])
+    .orderBy("streak", "desc")
+    .execute();
+
 export const createConnectionsResult = async (
   connectionsResult: NewConnectionsResults,
 ) => {
-  const existingRecord = await getConnectionsResults({
-    date: connectionsResult.date,
-    userId: connectionsResult.userId,
-  });
+  const lastResult = (
+    await db
+      .selectFrom("ConnectionsResults")
+      .selectAll("ConnectionsResults")
+      .where("userId", "=", connectionsResult.userId)
+      .orderBy("date", "desc")
+      .limit(1)
+      .execute()
+  )[0];
 
-  if (existingRecord[0]) {
-    return existingRecord[0];
+  if (lastResult && lastResult.date === connectionsResult.date) {
+    return lastResult;
+  }
+
+  let currentStreak = 0;
+  if (
+    lastResult &&
+    lastResult.date ===
+      LocalDate.parse(connectionsResult.date).minusDays(1).toJSON()
+  ) {
+    currentStreak = (lastResult.streak || 0) + 1;
   }
 
   return db
     .insertInto("ConnectionsResults")
-    .values(connectionsResult)
+    .values({
+      ...connectionsResult,
+      streak: currentStreak,
+    })
     .returningAll()
     .executeTakeFirstOrThrow();
 };

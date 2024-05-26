@@ -25,7 +25,7 @@ interface ConnectionsGameProps {
   date: string;
   userResult: ConnectionsResults | undefined | null;
   createConnectionsResult: (
-    result: Omit<NewConnectionsResults, "userId" | "createdAt">,
+    result: Omit<NewConnectionsResults, "userId" | "createdAt" | "streak">,
   ) => Promise<ConnectionsResults | undefined>;
 }
 
@@ -74,6 +74,8 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
   const gameNumber = gameDateToGameNumber(date);
 
   useEffect(() => {
+    console.log(userResult);
+
     // pull game state from database if it exists, otherwise load from local storage
     if (userResult) {
       gameDispatch({

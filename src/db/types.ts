@@ -43,6 +43,7 @@ interface ConnectionsResultsTable {
   date: string;
   gameNumber: number;
   createdAt: string | null;
+  streak: number | null;
 }
 export type ConnectionsResults = Selectable<ConnectionsResultsTable>;
 export type NewConnectionsResults = Insertable<ConnectionsResultsTable>;
