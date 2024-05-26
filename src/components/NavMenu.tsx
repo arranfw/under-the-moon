@@ -27,6 +27,7 @@ const NavItem: React.FC<NavItemProps> = ({ label, href, inset }) => {
       <NavigationMenu.Link asChild>
         <Drawer.Close asChild>
           <Link
+            prefetch
             href={href}
             className={cn(
               "flex gap-2 items-center relative rounded pl-2 text-lg",

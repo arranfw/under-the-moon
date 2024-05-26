@@ -18,6 +18,7 @@ export const ConnectionsDateNavLink: React.FC<ConnectionsDateNavLinkProps> = ({
 }) => {
   return (
     <Link
+      prefetch
       href={href}
       className={cn(
         "rounded-full shrink-0 dark:border-white w-8 h-8 flex items-center justify-center",
