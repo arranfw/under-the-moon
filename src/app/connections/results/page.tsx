@@ -31,11 +31,6 @@ const Page: React.FC<PageProps> = async () => {
       (result) => LocalDate.parse(result.date).toJSON() === date.toJSON(),
     )[0];
 
-  console.log(
-    now,
-    times(resultDays).map((day) => now.minusDays(day)),
-  );
-
   return (
     <>
       <div className="w-full flex justify-center mb-6">
@@ -52,32 +47,34 @@ const Page: React.FC<PageProps> = async () => {
             )}
           >
             <div className="flex flex-col gap-2">
-              {resultsForDay(now.minusDays(resultDays - i)).map((result) => (
-                <Tooltip
-                  key={result.id}
-                  tooltipContent={
-                    <p>
-                      {result.name}: {result.score}
-                    </p>
-                  }
-                >
-                  <Avatar
-                    className={cn("text-xs border border-slate-600", {
-                      "outline outline-yellow-600 dark:outline-yellow-400":
-                        result.score === 100,
-                    })}
-                    size={24}
-                    imageUrl={result.image || ""}
-                    fallbackText={
-                      result.name
-                        ?.split(" ")
-                        .slice(0, 2)
-                        .map((s) => s.charAt(0))
-                        .join("") || ""
+              {resultsForDay(now.minusDays(resultDays - i - 1)).map(
+                (result) => (
+                  <Tooltip
+                    key={result.id}
+                    tooltipContent={
+                      <p>
+                        {result.name}: {result.score}
+                      </p>
                     }
-                  />
-                </Tooltip>
-              ))}
+                  >
+                    <Avatar
+                      className={cn("text-xs border border-slate-600", {
+                        "outline outline-yellow-600 dark:outline-yellow-400":
+                          result.score === 100,
+                      })}
+                      size={24}
+                      imageUrl={result.image || ""}
+                      fallbackText={
+                        result.name
+                          ?.split(" ")
+                          .slice(0, 2)
+                          .map((s) => s.charAt(0))
+                          .join("") || ""
+                      }
+                    />
+                  </Tooltip>
+                ),
+              )}
             </div>
             <div
               className={cn(
@@ -86,7 +83,9 @@ const Page: React.FC<PageProps> = async () => {
               )}
             >
               <p className="text-lg">
-                {now.minusDays(resultDays - i).get(ChronoField.DAY_OF_MONTH)}
+                {now
+                  .minusDays(resultDays - i - 1)
+                  .get(ChronoField.DAY_OF_MONTH)}
               </p>
             </div>
           </div>
