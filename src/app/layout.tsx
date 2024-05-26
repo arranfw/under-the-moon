@@ -25,8 +25,8 @@ export default async function RootLayout({
   const session = await auth();
 
   return (
-    <html lang="en" className="h-full overflow-y-auto">
-      <body className={cn(inter.className, "h-full overflow-y-auto")}>
+    <html lang="en" className="h-full">
+      <body className={cn(inter.className, "h-full flex flex-col")}>
         <nav
           className={cn(
             "flex justify-between items-center p-4 sticky top-0 z-10",
@@ -41,7 +41,9 @@ export default async function RootLayout({
             <NavSignInOut session={session} />
           </div>
         </nav>
-        <main className="md:p-12 p-4 py-6">{children}</main>
+        <main className=" overflow-y-auto">
+          <div className="md:p-12 p-4 py-6">{children}</div>
+        </main>
       </body>
     </html>
   );

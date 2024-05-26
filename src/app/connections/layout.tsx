@@ -11,6 +11,7 @@ const Layout: React.FC<ConnectionsLayoutProps> = ({ children }) => {
         </div>
       </div>
       {children}
+      {/* <div className="pb-20"></div> */}
     </div>
   );
 };
