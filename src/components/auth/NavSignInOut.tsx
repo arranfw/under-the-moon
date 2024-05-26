@@ -31,6 +31,7 @@ export const NavSignInOut: React.FC<NavSignInOutProps> = ({ session }) => {
               <DropdownMenu.Content
                 collisionPadding={20}
                 className={cn(
+                  "z-20",
                   "mt-2 rounded-md shadow-md overflow-hidden p-2 w-32",
                   "bg-zinc-50 dark:bg-zinc-900",
                 )}

@@ -1,10 +1,14 @@
 import { Database } from "./types";
-import { ZonedDateTime } from "@js-joda/core";
+import { LocalDate, ZonedDateTime } from "@js-joda/core";
 import { Kysely, PostgresDialect } from "kysely";
 import { Pool, types } from "pg";
 
 types.setTypeParser(types.builtins.TIMESTAMP, (val) =>
   ZonedDateTime.parse(val.split(" ").join("T") + "Z").toJSON(),
+);
+
+types.setTypeParser(types.builtins.DATE, (val) =>
+  LocalDate.parse(val).toJSON(),
 );
 
 export const pool = new Pool({

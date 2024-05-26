@@ -85,6 +85,11 @@ export const NavMenu: React.FC<NavMenuProps> = () => {
                 label="Today's results"
                 inset={3}
               />
+              <NavItem
+                href={`/connections/results`}
+                label="Recent results"
+                inset={3}
+              />
 
               <Divider className="my-2" />
 

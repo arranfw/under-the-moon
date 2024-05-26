@@ -8,23 +8,37 @@ export const getConnectionsResults = ({
   date,
   userId,
   orderBy,
+  dateRange,
 }: {
-  date: string;
+  date?: string;
   userId?: string;
   orderBy?: {
     column: keyof ConnectionsResults;
     dir: OrderByDirection;
   };
+  dateRange?: { start?: string; end?: string };
 }) => {
   let query = db
     .selectFrom("ConnectionsResults")
     .selectAll("ConnectionsResults")
     .leftJoin("User", "ConnectionsResults.userId", "User.id")
-    .select("User.name")
-    .where("date", "=", date);
+    .select(["User.name", "User.image"]);
+
+  if (date) {
+    query = query.where("date", "=", date);
+  }
 
   if (userId) {
     query = query.where("userId", "=", userId);
+  }
+
+  if (dateRange) {
+    if (dateRange.start) {
+      query = query.where("date", ">=", dateRange.start);
+    }
+    if (dateRange.end) {
+      query = query.where("date", "<=", dateRange.end);
+    }
   }
 
   if (orderBy) {
