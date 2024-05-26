@@ -5,7 +5,7 @@
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 240, 255, 240;
+  --background-end-rgb: 220, 235, 220;
 
   --connections-yellow: 249, 223, 109;
   --connections-green: 160, 195, 90;
@@ -16,8 +16,8 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 5, 5, 5;
-    --background-end-rgb: 5, 20, 5;
+    --background-start-rgb: 12, 18, 18;
+    --background-end-rgb: 20, 35, 20;
 
     --connections-yellow: 143, 120, 19;
     --connections-green: 85, 122, 11;
@@ -26,7 +26,7 @@
   }
 }
 
-body {
+body, .bg-fade {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
     to bottom,

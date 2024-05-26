@@ -62,7 +62,7 @@ export const NavMenu: React.FC<NavMenuProps> = () => {
         <Drawer.Content
           className={cn(
             "h-full p-4 fixed top-0 z-20",
-            "bg-zinc-50 dark:bg-zinc-900",
+            "bg-fade shadow-md dark:shadow-slate-900",
           )}
         >
           <div className="flex items-center justify-center gap-4">
@@ -71,7 +71,7 @@ export const NavMenu: React.FC<NavMenuProps> = () => {
             </Drawer.Close>
             <h1 className="font-semibold">Under the Moon</h1>
           </div>
-          <Divider className="my-2" />
+          <Divider className="my-2 mt-4" />
           <NavigationMenu.Root>
             <NavigationMenu.List className="flex flex-col gap-1">
               <NavItem href={"/connections"} label="Connections" />

@@ -25,9 +25,14 @@ export default async function RootLayout({
   const session = await auth();
 
   return (
-    <html lang="en" className="h-full">
-      <body className={cn(inter.className, "h-full")}>
-        <nav className="flex justify-between items-center p-4 sticky top-0">
+    <html lang="en" className="h-full overflow-y-auto">
+      <body className={cn(inter.className, "h-full overflow-y-auto")}>
+        <nav
+          className={cn(
+            "flex justify-between items-center p-4 sticky top-0 z-10",
+            "bg-base shadow dark:shadow-slate-900",
+          )}
+        >
           <div className="flex items-center justify-center gap-4">
             <NavMenu />
             <h1 className="font-semibold">Under the Moon</h1>
@@ -36,7 +41,7 @@ export default async function RootLayout({
             <NavSignInOut session={session} />
           </div>
         </nav>
-        <main className="md:p-12 p-2 py-6">{children}</main>
+        <main className="md:p-12 p-4 py-6">{children}</main>
       </body>
     </html>
   );

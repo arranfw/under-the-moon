@@ -39,6 +39,7 @@ const config: Config = {
         "connections-green": "rgb(var(--connections-green))",
         "connections-blue": "rgb(var(--connections-blue))",
         "connections-purple": "rgb(var(--connections-purple))",
+        base: "rgb(var(--background-start-rgb))",
       },
       colors: {
         "connections-button": "rgb(0, 0, 0)",

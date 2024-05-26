@@ -81,7 +81,7 @@ const Page = async ({ params }: { params: { date: string } }) => {
           key={result.id}
           className={cn(
             "rounded-md m-1 p-4 flex items-center justify-between gap-4 relative",
-            "bg-zinc-50 border-zinc-100 border-opacity-50 bg-opacity-30 dark:bg-zinc-900 border dark:border-zinc-800",
+            "border-zinc-400 border-opacity-50 border dark:border-zinc-800",
           )}
         >
           {(i === 0 || Math.round(result.score) === 100) && (
