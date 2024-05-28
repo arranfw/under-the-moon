@@ -5,13 +5,11 @@ import { Divider } from "@/components/Divider";
 import { Tooltip } from "@/components/ToolTip";
 import {
   getConnectionsResults,
-  getConnectionsScoreTotals,
-  getConnectionsStreaks,
+  getUserResultCount,
+  getUserTotalScores,
 } from "@/db/repositories";
 import { cn } from "@/util";
 
-import { faFire } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ChronoField, LocalDate } from "@js-joda/core";
 import { partition, times } from "lodash";
 
@@ -31,8 +29,18 @@ const Page: React.FC<PageProps> = async () => {
       start: now.minusDays(resultDays).toJSON(),
     },
   });
-  const streaks = await getConnectionsStreaks();
-  const scoreTotals = await getConnectionsScoreTotals();
+  const resultCount = await getUserResultCount({
+    dateRange: {
+      start: now.minusDays(resultDays).toJSON(),
+      end: now.toJSON(),
+    },
+  });
+  const totalScores = await getUserTotalScores({
+    dateRange: {
+      start: now.minusDays(resultDays).toJSON(),
+      end: now.toJSON(),
+    },
+  });
 
   const resultsForDay = (date: LocalDate) =>
     partition(
@@ -43,7 +51,9 @@ const Page: React.FC<PageProps> = async () => {
   return (
     <div className="flex flex-col gap-4">
       <div className="w-full flex justify-center mb-6">
-        <p className="text-lg">Recent results</p>
+        <h2 className="text-lg">
+          Recent results <small>(Last 12 days)</small>
+        </h2>
       </div>
       <div className="w-full flex">
         {times(resultDays, (i) => (
@@ -104,13 +114,13 @@ const Page: React.FC<PageProps> = async () => {
       <Divider />
 
       <div className="w-full flex flex-col justify-center mb-6">
-        <h2 className="text-lg place-self-center">Streaks (beta)</h2>
+        <h2 className="text-lg place-self-center">
+          Completed Puzzles <small>(Last 12 days)</small>
+        </h2>
         <div className="flex flex-col items-start">
-          {streaks.map((streak) => (
+          {resultCount.map((streak) => (
             <div key={streak.name} className="flex gap-2">
-              <p>
-                {streak.date === now.toJSON() ? "🔥" : "⌛"} {streak.streak}
-              </p>
+              <p>{streak.count}</p>
               <p>{streak.name}</p>
             </div>
           ))}
@@ -120,9 +130,11 @@ const Page: React.FC<PageProps> = async () => {
       <Divider />
 
       <div className="w-full flex flex-col justify-center mb-6">
-        <h2 className="text-lg place-self-center">Player total scores</h2>
+        <h2 className="text-lg place-self-center">
+          Player total scores <small>(Last 12 days)</small>
+        </h2>
         <div className="flex flex-col items-start">
-          {scoreTotals.map((scoreTotal) => (
+          {totalScores.map((scoreTotal) => (
             <div key={scoreTotal.name} className="flex gap-2">
               <p>{scoreTotal.score}</p>
               <p>{scoreTotal.name}</p>

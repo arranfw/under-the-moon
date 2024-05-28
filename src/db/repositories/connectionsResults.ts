@@ -66,7 +66,11 @@ export const getConnectionsStreaks = () =>
     .orderBy("streak", "desc")
     .execute();
 
-export const getConnectionsScoreTotals = () =>
+export const getUserTotalScores = ({
+  dateRange,
+}: {
+  dateRange: { start: string; end: string };
+}) =>
   db
     .selectFrom("ConnectionsResults")
     .leftJoin("User", "ConnectionsResults.userId", "User.id")
@@ -78,6 +82,28 @@ export const getConnectionsScoreTotals = () =>
     ])
     .groupBy(["userId", "User.name", "User.image"])
     .orderBy("score", "desc")
+    .where("date", ">=", dateRange.start)
+    .where("date", "<=", dateRange.end)
+    .execute();
+
+export const getUserResultCount = ({
+  dateRange,
+}: {
+  dateRange: { start: string; end: string };
+}) =>
+  db
+    .selectFrom("ConnectionsResults")
+    .leftJoin("User", "ConnectionsResults.userId", "User.id")
+    .select(({ fn }) => [
+      "userId",
+      "User.name",
+      "User.image",
+      fn.agg<string>("count", ["ConnectionsResults.id"]).as("count"),
+    ])
+    .groupBy(["userId", "User.name", "User.image"])
+    .orderBy("count", "desc")
+    .where("date", ">=", dateRange.start)
+    .where("date", "<=", dateRange.end)
     .execute();
 
 export const createConnectionsResult = async (

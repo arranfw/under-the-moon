@@ -47,12 +47,27 @@ const Page: React.FC<PageProps> = () => {
               </li>
               <li>- Fixed Game Summary clipping off the end of the screen</li>
               <li>
-                - Added score totals to{" "}
+                - Removed streaks from the{" "}
                 <Link className="underline" href="/connections/results">
                   Recent Results
                 </Link>{" "}
-                page, this shows the cumulative score of all completions per
-                person
+                page.
+              </li>
+              <li>
+                - Added recent <b>puzzle completion count</b> to the{" "}
+                <Link className="underline" href="/connections/results">
+                  Recent Results
+                </Link>{" "}
+                page, this how many puzzles each person has completed in the
+                last 12 days
+              </li>
+              <li>
+                - Added <b>recent score totals</b> to the{" "}
+                <Link className="underline" href="/connections/results">
+                  Recent Results
+                </Link>{" "}
+                page, this shows the cumulative score of all completions in the
+                last 12 days per person
               </li>
             </ul>
           </ChangeDay>
