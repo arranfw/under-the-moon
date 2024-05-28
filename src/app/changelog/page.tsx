@@ -4,8 +4,41 @@ import { ConnectionsActionButton } from "@/components/connections/ActionButton";
 import { Divider } from "@/components/Divider";
 import { dayMonthYearFormatter } from "@/util/date";
 
+import {
+  faBugs,
+  faMinus,
+  faPlus,
+  faStarOfLife,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { LocalDate } from "@js-joda/core";
 import Link from "next/link";
+
+interface ChangeIndicatorProps {
+  type: "add" | "remove" | "fix" | "change";
+}
+
+const ChangeIndicator: React.FC<ChangeIndicatorProps> = ({ type }) => {
+  const iconMap = {
+    add: faPlus,
+    remove: faMinus,
+    fix: faBugs,
+    change: faStarOfLife,
+  };
+  const colorMap = {
+    add: "text-green-500",
+    remove: "text-red-500",
+    fix: "text-orange-500",
+    change: "text-purple-500",
+  };
+  return (
+    <FontAwesomeIcon
+      icon={iconMap[type]}
+      className={colorMap[type]}
+      fixedWidth
+    />
+  );
+};
 
 interface ChangeDayProps extends React.PropsWithChildren {
   date: LocalDate;
@@ -39,22 +72,30 @@ const Page: React.FC<PageProps> = () => {
             <ChangeSectionHeader>Connections:</ChangeSectionHeader>
             <ul>
               <li>
-                -{" "}
+                <ChangeIndicator type="change" />{" "}
                 <div className="inline-flex scale-75 -mx-2">
                   <ConnectionsActionButton>Shuffle</ConnectionsActionButton>
                 </div>{" "}
                 sorts marked items to the top
               </li>
-              <li>- Fixed Game Summary clipping off the end of the screen</li>
               <li>
-                - Removed streaks from the{" "}
+                <ChangeIndicator type="fix" /> Fixed Game Summary clipping off
+                the end of the screen
+              </li>
+              <li>
+                <ChangeIndicator type="fix" /> Fixed layout shifts when opening
+                nav menu
+              </li>
+              <li>
+                <ChangeIndicator type="remove" /> Removed streaks from the{" "}
                 <Link className="underline" href="/connections/results">
                   Recent Results
                 </Link>{" "}
                 page.
               </li>
               <li>
-                - Added recent <b>puzzle completion count</b> to the{" "}
+                <ChangeIndicator type="add" /> Added recent{" "}
+                <b>puzzle completion count</b> to the{" "}
                 <Link className="underline" href="/connections/results">
                   Recent Results
                 </Link>{" "}
@@ -62,7 +103,8 @@ const Page: React.FC<PageProps> = () => {
                 last 12 days
               </li>
               <li>
-                - Added <b>recent score averages</b> to the{" "}
+                <ChangeIndicator type="add" /> Added{" "}
+                <b>recent score averages</b> to the{" "}
                 <Link className="underline" href="/connections/results">
                   Recent Results
                 </Link>{" "}
@@ -75,7 +117,7 @@ const Page: React.FC<PageProps> = () => {
             <ChangeSectionHeader>Connections:</ChangeSectionHeader>
             <ul>
               <li>
-                -{" "}
+                <ChangeIndicator type="add" />{" "}
                 <Link className="underline" href="/connections/results">
                   Recent Results
                 </Link>
