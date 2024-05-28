@@ -53,6 +53,12 @@ button {
     transform 75ms ease-in-out;
 }
 
+/* TAILWIND */
+.select-none {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+}
+
 /* RADIX */
 
 .SeparatorRoot[data-orientation='horizontal'] {
