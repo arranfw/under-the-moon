@@ -62,7 +62,7 @@ export type GameAction =
     }
   | {
       type: GameActionType.PUSH_POST_CORRECT_GUESS;
-      payload: Category;
+      payload: { category: Category; isPlayerGuess: boolean };
     }
   | {
       type: GameActionType.LOAD_STATE;
@@ -204,12 +204,15 @@ export const gameStateReducer = (
           ...state,
           selected: [],
           hintedItems: [],
-          guessCount: state.guessCount + 1,
-          completedGroups: [...state.completedGroups, action.payload],
-          score:
-            state.score +
-            guessMultiplier[state.guessCount] *
-              difficultyMultiplier[action.payload.difficulty || 0],
+          guessCount: action.payload.isPlayerGuess
+            ? state.guessCount + 1
+            : state.guessCount,
+          completedGroups: [...state.completedGroups, action.payload.category],
+          score: action.payload.isPlayerGuess
+            ? state.score +
+              guessMultiplier[state.guessCount] *
+                difficultyMultiplier[action.payload.category.difficulty || 0]
+            : state.score,
         };
       case GameActionType.LOAD_STATE:
         return action.payload;

@@ -115,6 +115,10 @@ const Page: React.FC<PageProps> = () => {
                 page, this shows the average score of all completions in the
                 last 12 days per person
               </li>
+              <li>
+                <ChangeIndicator type="add" /> Solution is now shown when
+                failing the game, thanks Carly
+              </li>
             </ul>
           </ChangeDay>
           <ChangeDay date={LocalDate.parse("2024-05-26")}>

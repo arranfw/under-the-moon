@@ -3,6 +3,4 @@ import { redirect, RedirectType } from "next/navigation";
 
 export default function Home() {
   redirect("/connections", RedirectType.replace);
-
-  return null;
 }

@@ -46,7 +46,7 @@ export const ConnectionsItem: React.FC<ConnectionsItemProps> = ({
     >
       <div
         className={cn(
-          "p-1 box-border transition-all duration-1000",
+          "p-1 box-border transition-all duration-1000 select-none",
           `absolute w-[25%] h-[25%]`,
           `top-[${(row * 25).toFixed(0)}%] left-[${(col * 25).toFixed(0)}%]`,
         )}
@@ -54,7 +54,7 @@ export const ConnectionsItem: React.FC<ConnectionsItemProps> = ({
         <button
           onClick={() => onClick(label)}
           className={cn(
-            "w-full h-full grid place-content-center z-0 select-none",
+            "w-full h-full grid place-content-center z-0",
             "rounded-md uppercase font-bold select-none",
             {
               "bg-stone-200 dark:bg-gray-800": !selected,

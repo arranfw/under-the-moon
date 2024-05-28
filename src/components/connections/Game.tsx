@@ -19,6 +19,11 @@ import { MistakesRemaining } from "./MistakesRemaining";
 import { gameDateToGameNumber } from "./util";
 import { intersection, isEmpty } from "lodash";
 
+const JIGGLE_CORRECT_DURATION = 300;
+const JIGGLE_ALL_CORRECT_DURATION = JIGGLE_CORRECT_DURATION * 4;
+const JIGGLE_ALL_INCORRECT_DURATION = 1000;
+const GRID_REARRANGE_DURATION = 600;
+
 interface ConnectionsGameProps {
   gameGrid: string[];
   categories: Category[];
@@ -36,6 +41,8 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
   userResult,
   createConnectionsResult,
 }) => {
+  const [isAutoCompleting, setIsAutoCompleting] = useState(false);
+  const [gameComplete, setGameComplete] = useState(Boolean(userResult));
   const initialGameState: GameState = {
     date,
     selected: [],
@@ -68,9 +75,6 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     gameDispatch,
   ] = useReducer(gameStateReducer, initialGameState);
 
-  const gameComplete =
-    completedGroups.length === categories.length ||
-    incorrectGuesses.length === 4;
   const gameNumber = gameDateToGameNumber(date);
 
   useEffect(() => {
@@ -145,11 +149,11 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     });
   };
 
-  const getCorrectGuessCount = () => {
+  const getCorrectGuessCount = (guess: string[]) => {
     for (const category of categories) {
       const correctCount = intersection(
         category.cards.map((card) => card.content),
-        selected,
+        guess,
       ).length;
 
       if (correctCount > 2) {
@@ -164,13 +168,37 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     );
   };
 
-  const submit = async () => {
-    const currentGuess = [...selected];
-    const correctGuessCount = getCorrectGuessCount();
+  const autoCompleteGame = async () => {
+    setIsAutoCompleting(true);
+    const incompleteGroups = categories.filter(
+      (category) =>
+        completedGroups.some(
+          (completedGroup) => completedGroup.title === category.title,
+        ) === false,
+    );
+
+    for (const group of incompleteGroups) {
+      await submit({
+        guess: group.cards.map((card) => card.content),
+        isPlayerGuess: false,
+      });
+      await new Promise((resolve) => setTimeout(resolve, 300)); // pause between submissions
+    }
+    setGameComplete(true);
+  };
+
+  const submit = async ({
+    guess,
+    isPlayerGuess = true,
+  }: {
+    guess: string[];
+    isPlayerGuess?: boolean;
+  }) => {
+    const correctGuessCount = getCorrectGuessCount(guess);
     const isCorrect = correctGuessCount === 4;
     const wasPreviouslyGuessed = getWasPreviouslyGuessed();
 
-    if (currentGuess.length !== 4) {
+    if (guess.length !== 4) {
       return;
     }
 
@@ -179,17 +207,19 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
       return;
     }
 
-    const fullGuess = currentGuess.map(
+    const fullGuess = guess.map(
       (guess) =>
         categories.find((category) =>
           category.cards.map((card) => card.content).includes(guess),
         )?.difficulty!,
     );
 
-    gameDispatch({
-      type: GameActionType.PUSH_GAME_SUMMARY,
-      payload: fullGuess,
-    });
+    if (isPlayerGuess) {
+      gameDispatch({
+        type: GameActionType.PUSH_GAME_SUMMARY,
+        payload: fullGuess,
+      });
+    }
 
     if (correctGuessCount === 3) {
       window.alert("One away...");
@@ -198,44 +228,62 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     if (!isCorrect) {
       gameDispatch({
         type: GameActionType.PUSH_INCORRECT_GUESS,
-        payload: currentGuess,
+        payload: guess,
       });
-      setJigglingIncorrectItems(currentGuess);
-      setTimeout(() => {
-        setJigglingIncorrectItems([]);
-      }, 1000);
+      setJigglingIncorrectItems(guess);
+      await new Promise((resolve) =>
+        setTimeout(() => {
+          setJigglingIncorrectItems([]);
+          resolve(0);
+        }, JIGGLE_ALL_INCORRECT_DURATION),
+      );
+
+      if (incorrectGuesses.length >= 3) {
+        await autoCompleteGame();
+      }
       return;
     }
 
-    currentGuess.forEach((guess, i) => {
+    guess.forEach((guess, i) => {
       setTimeout(() => {
         setJigglingCorrectItems((prev) => [...prev, guess]);
-      }, i * 300);
+      }, i * JIGGLE_CORRECT_DURATION);
     });
+
     setTimeout(() => {
       setJigglingCorrectItems([]);
-    }, 1200);
+    }, JIGGLE_ALL_CORRECT_DURATION);
 
-    await new Promise((resolve) => setTimeout(resolve, 1300));
+    await new Promise((resolve) =>
+      setTimeout(resolve, JIGGLE_ALL_CORRECT_DURATION + 100),
+    );
 
     const completedGroup = categories.find(
       (category) =>
         intersection(
           category.cards.map((card) => card.content),
-          currentGuess,
+          guess,
         ).length === 4,
     );
 
     gameDispatch({
       type: GameActionType.PUSH_CORRECT_GUESS,
-      payload: currentGuess,
+      payload: guess,
     });
-    await new Promise((resolve) => setTimeout(resolve, 600));
+    await new Promise((resolve) =>
+      setTimeout(resolve, GRID_REARRANGE_DURATION),
+    );
     if (completedGroup) {
       gameDispatch({
         type: GameActionType.PUSH_POST_CORRECT_GUESS,
-        payload: completedGroup,
+        payload: {
+          category: completedGroup,
+          isPlayerGuess: isPlayerGuess,
+        },
       });
+    }
+    if (completedGroups.length === 4) {
+      setGameComplete(true);
     }
   };
 
@@ -311,31 +359,40 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
           },
         )}
       >
-        <ConnectionsActionButton onClick={handleShuffleClick}>
+        <ConnectionsActionButton
+          onClick={handleShuffleClick}
+          disabled={isAutoCompleting}
+        >
           Shuffle
         </ConnectionsActionButton>
         <ConnectionsActionButton
           onClick={handleHintClick}
-          disabled={selected.length !== 0 || hintedItems?.length !== 0}
+          disabled={
+            selected.length !== 0 ||
+            hintedItems?.length !== 0 ||
+            isAutoCompleting
+          }
         >
           Hint (-10pts)
         </ConnectionsActionButton>
         <ConnectionsActionButton
           onClick={handleDeselectAll}
-          disabled={selected.length === 0}
+          disabled={selected.length === 0 || isAutoCompleting}
         >
           Deselect All
         </ConnectionsActionButton>
         <ConnectionsActionButton
           onClick={handleUnmarkAll}
-          disabled={markedItems?.length === 0}
+          disabled={markedItems?.length === 0 || isAutoCompleting}
         >
           Unmark All
         </ConnectionsActionButton>
         <ConnectionsActionButton
-          onClick={submit}
+          onClick={() => submit({ guess: selected })}
           disabled={
-            selected.length !== 4 || jigglingIncorrectItems.length !== 0
+            selected.length !== 4 ||
+            jigglingIncorrectItems.length !== 0 ||
+            isAutoCompleting
           }
         >
           Submit
