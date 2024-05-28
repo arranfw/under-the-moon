@@ -45,6 +45,7 @@ const Page: React.FC<PageProps> = () => {
                 </div>{" "}
                 sorts marked items to the top
               </li>
+              <li>- Fixed Game Summary clipping off the end of the screen</li>
             </ul>
           </ChangeDay>
           <ChangeDay date={LocalDate.parse("2024-05-26")}>

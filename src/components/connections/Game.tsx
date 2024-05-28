@@ -286,7 +286,8 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
         {completedGroups.map((category) => (
           <CompletedGroup key={category.title} category={category} />
         ))}
-
+      </div>
+      <div className="w-full">
         {gameComplete && (
           <GameSummary
             gameNumber={gameNumber}
@@ -297,7 +298,6 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
           />
         )}
       </div>
-
       <div className={cn("flex items-center gap-2", { hidden: gameComplete })}>
         <p>Mistakes remaining:</p>
         <MistakesRemaining incorrectGuessCount={incorrectGuesses.length} />
