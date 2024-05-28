@@ -111,6 +111,15 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
   }, [gameComplete, userResult]);
 
   useEffect(() => {
+    if (
+      completedGroups.length === categories.length ||
+      incorrectGuesses.length === 4
+    ) {
+      setGameComplete(true);
+    }
+  }, [completedGroups, categories]);
+
+  useEffect(() => {
     console.log({ gameComplete, userResult });
 
     if (gameComplete && !userResult) {
