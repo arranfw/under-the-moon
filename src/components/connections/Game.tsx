@@ -74,8 +74,6 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
   const gameNumber = gameDateToGameNumber(date);
 
   useEffect(() => {
-    console.log(userResult);
-
     // pull game state from database if it exists, otherwise load from local storage
     if (userResult) {
       gameDispatch({

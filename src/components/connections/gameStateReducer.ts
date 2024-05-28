@@ -1,7 +1,7 @@
 import { Category } from "@/util/api/connections";
 
 import { difficultyMultiplier, guessMultiplier } from "./util";
-import { shuffle } from "lodash";
+import { groupBy, partition, shuffle } from "lodash";
 
 export interface GameState {
   date: string;
@@ -78,11 +78,25 @@ export const gameStateReducer = (
   const newState = (() => {
     switch (action.type) {
       case GameActionType.SHUFFLE:
+        const nonMarkedItems = state.grid
+          .slice(state.correctGuesses.length)
+          .filter(
+            (item) =>
+              !state.markedItems?.some(
+                (markedItem) => markedItem.label == item,
+              ),
+          );
+        const groupedMarkedItems = groupBy(state.markedItems, "difficulty");
+
         return {
           ...state,
           grid: [
             ...state.grid.slice(0, state.correctGuesses.length),
-            ...shuffle(state.grid.slice(state.correctGuesses.length)),
+            ...(groupedMarkedItems[0] || []).map((item) => item.label),
+            ...(groupedMarkedItems[1] || []).map((item) => item.label),
+            ...(groupedMarkedItems[2] || []).map((item) => item.label),
+            ...(groupedMarkedItems[3] || []).map((item) => item.label),
+            ...shuffle(nonMarkedItems),
           ],
         };
       case GameActionType.USE_HINT:
@@ -172,6 +186,9 @@ export const gameStateReducer = (
         return {
           ...state,
           correctGuesses: [...state.correctGuesses, ...action.payload],
+          markedItems: state.markedItems?.filter(
+            (item) => !action.payload.includes(item.label),
+          ),
           grid: [
             ...state.correctGuesses,
             ...action.payload,
