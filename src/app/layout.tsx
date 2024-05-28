@@ -12,6 +12,8 @@ import { Inter } from "next/font/google";
 
 import "./globals.css";
 
+import Link from "next/link";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -43,12 +45,17 @@ export default async function RootLayout({
             <NavSignInOut session={session} />
           </div>
         </nav>
-        <main className=" overflow-y-auto">
+        <main className="overflow-y-auto h-full">
           <div className="md:p-12 p-4 py-6">
             {children}
             <SpeedInsights />
           </div>
         </main>
+        <footer className="backdrop-blur-lg backdrop-brightness-105 grid w-full px-2 py-1 border-t border-gray-400 dark:border-gray-800">
+          <div className="place-self-end">
+            <Link href="/changelog">Changelog</Link>
+          </div>
+        </footer>
       </body>
     </html>
   );

@@ -67,6 +67,9 @@ const config: Config = {
         popIn: "popIn 500ms ease-in-out, fadeIn 500ms ease-in-out",
         slideDown: "slideDown 500ms ease-in-out, fadeIn 500ms ease-in-out",
       },
+      backdropBrightness: {
+        25: "25%",
+      },
       keyframes: {
         jiggleIncorrect: {
           "0%, 100%": { transform: "translateX(0px)" },

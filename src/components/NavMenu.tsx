@@ -63,7 +63,7 @@ export const NavMenu: React.FC<NavMenuProps> = () => {
         <Drawer.Content
           className={cn(
             "h-full p-4 fixed top-0 z-20",
-            "bg-fade shadow-md dark:shadow-slate-900",
+            "backdrop-blur-lg backdrop-brightness-25 shadow-md dark:shadow-slate-900",
           )}
         >
           <div className="flex items-center justify-center gap-4">
