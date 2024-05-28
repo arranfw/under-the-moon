@@ -45,7 +45,7 @@ export default async function RootLayout({
             <NavSignInOut session={session} />
           </div>
         </nav>
-        <main className="overflow-y-auto h-full">
+        <main className="overflow-y-auto grow">
           <div className="md:p-12 p-4 py-6">
             {children}
             <SpeedInsights />

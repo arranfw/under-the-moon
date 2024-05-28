@@ -26,6 +26,9 @@
   }
 }
 
+body {
+  height: 100% !important;
+}
 body, .bg-fade {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
