@@ -87,6 +87,10 @@ const Page: React.FC<PageProps> = () => {
                 nav menu
               </li>
               <li>
+                <ChangeIndicator type="fix" /> Fixed iOS text selection issue
+                when attempting to label words, thanks Carly
+              </li>
+              <li>
                 <ChangeIndicator type="remove" /> Removed streaks from the{" "}
                 <Link className="underline" href="/connections/results">
                   Recent Results

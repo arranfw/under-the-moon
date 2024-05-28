@@ -54,7 +54,7 @@ export const ConnectionsItem: React.FC<ConnectionsItemProps> = ({
         <button
           onClick={() => onClick(label)}
           className={cn(
-            "w-full h-full grid place-content-center z-0",
+            "w-full h-full grid place-content-center z-0 select-none",
             "rounded-md uppercase font-bold select-none",
             {
               "bg-stone-200 dark:bg-gray-800": !selected,
