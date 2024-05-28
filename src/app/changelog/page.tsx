@@ -68,6 +68,15 @@ const Page: React.FC<PageProps> = () => {
       <div className="flex items-center flex-col gap-6 mb-6">
         <h1 className="text-4xl font-bold">What's new</h1>
         <div className="w-full">
+          <ChangeDay date={LocalDate.parse("2024-05-28")}>
+            <ChangeSectionHeader>Connections:</ChangeSectionHeader>
+            <ul>
+              <li>
+                <ChangeIndicator type="fix" /> Fixed an issue with game
+                completion state not showing, thanks Jason
+              </li>
+            </ul>
+          </ChangeDay>
           <ChangeDay date={LocalDate.parse("2024-05-27")}>
             <ChangeSectionHeader>Connections:</ChangeSectionHeader>
             <ul>
