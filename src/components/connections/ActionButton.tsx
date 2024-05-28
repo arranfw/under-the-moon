@@ -3,7 +3,7 @@ import React from "react";
 import { cn } from "@/util";
 
 interface ConnectionsActionButton extends React.PropsWithChildren {
-  onClick: () => void;
+  onClick?: () => void;
   disabled?: boolean;
 }
 
