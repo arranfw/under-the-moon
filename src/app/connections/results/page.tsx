@@ -1,9 +1,11 @@
 import React from "react";
 
 import { Avatar } from "@/components/Avatar";
+import { Divider } from "@/components/Divider";
 import { Tooltip } from "@/components/ToolTip";
 import {
   getConnectionsResults,
+  getConnectionsScoreTotals,
   getConnectionsStreaks,
 } from "@/db/repositories";
 import { cn } from "@/util";
@@ -29,7 +31,8 @@ const Page: React.FC<PageProps> = async () => {
       start: now.minusDays(resultDays).toJSON(),
     },
   });
-  const streaks = await getConnectionsStreaks(now.toJSON());
+  const streaks = await getConnectionsStreaks();
+  const scoreTotals = await getConnectionsScoreTotals();
 
   const resultsForDay = (date: LocalDate) =>
     partition(
@@ -97,6 +100,9 @@ const Page: React.FC<PageProps> = async () => {
           </div>
         ))}
       </div>
+
+      <Divider />
+
       <div className="w-full flex flex-col justify-center mb-6">
         <h2 className="text-lg place-self-center">Streaks (beta)</h2>
         <div className="flex flex-col items-start">
@@ -106,6 +112,20 @@ const Page: React.FC<PageProps> = async () => {
                 {streak.date === now.toJSON() ? "🔥" : "⌛"} {streak.streak}
               </p>
               <p>{streak.name}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <Divider />
+
+      <div className="w-full flex flex-col justify-center mb-6">
+        <h2 className="text-lg place-self-center">Player total scores</h2>
+        <div className="flex flex-col items-start">
+          {scoreTotals.map((scoreTotal) => (
+            <div key={scoreTotal.name} className="flex gap-2">
+              <p>{scoreTotal.score}</p>
+              <p>{scoreTotal.name}</p>
             </div>
           ))}
         </div>

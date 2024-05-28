@@ -50,7 +50,7 @@ export const getConnectionsResults = ({
   return query.execute();
 };
 
-export const getConnectionsStreaks = (date: string) =>
+export const getConnectionsStreaks = () =>
   db
     .selectFrom("ConnectionsResults")
     .leftJoin("User", "ConnectionsResults.userId", "User.id")
@@ -64,6 +64,20 @@ export const getConnectionsStreaks = (date: string) =>
     .where("ConnectionsResults.streak", ">=", 3)
     .groupBy(["userId", "User.name", "User.image"])
     .orderBy("streak", "desc")
+    .execute();
+
+export const getConnectionsScoreTotals = () =>
+  db
+    .selectFrom("ConnectionsResults")
+    .leftJoin("User", "ConnectionsResults.userId", "User.id")
+    .select(({ fn }) => [
+      "userId",
+      "User.name",
+      "User.image",
+      fn.agg<string>("sum", ["ConnectionsResults.score"]).as("score"),
+    ])
+    .groupBy(["userId", "User.name", "User.image"])
+    .orderBy("score", "desc")
     .execute();
 
 export const createConnectionsResult = async (

@@ -46,6 +46,14 @@ const Page: React.FC<PageProps> = () => {
                 sorts marked items to the top
               </li>
               <li>- Fixed Game Summary clipping off the end of the screen</li>
+              <li>
+                - Added score totals to{" "}
+                <Link className="underline" href="/connections/results">
+                  Recent Results
+                </Link>{" "}
+                page, this shows the cumulative score of all completions per
+                person
+              </li>
             </ul>
           </ChangeDay>
           <ChangeDay date={LocalDate.parse("2024-05-26")}>
