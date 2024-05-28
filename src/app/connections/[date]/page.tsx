@@ -84,6 +84,8 @@ const Connections = async ({ params }: { params: { date: string } }) => {
             return;
           }
 
+          console.log("server creating result", { result });
+
           return createConnectionsResult({
             ...result,
             userId: session?.user.id,

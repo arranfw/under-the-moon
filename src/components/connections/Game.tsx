@@ -114,6 +114,8 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
     console.log({ gameComplete, userResult });
 
     if (gameComplete && !userResult) {
+      console.log("uploading result");
+
       createConnectionsResult({
         date,
         score: Math.round(score),
