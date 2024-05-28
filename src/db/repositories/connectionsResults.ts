@@ -66,7 +66,7 @@ export const getConnectionsStreaks = () =>
     .orderBy("streak", "desc")
     .execute();
 
-export const getUserTotalScores = ({
+export const getUserScoreAverages = ({
   dateRange,
 }: {
   dateRange: { start: string; end: string };
@@ -78,10 +78,10 @@ export const getUserTotalScores = ({
       "userId",
       "User.name",
       "User.image",
-      fn.agg<string>("sum", ["ConnectionsResults.score"]).as("score"),
+      fn.agg<string>("avg", ["ConnectionsResults.score"]).as("scoreAverage"),
     ])
     .groupBy(["userId", "User.name", "User.image"])
-    .orderBy("score", "desc")
+    .orderBy("scoreAverage", "desc")
     .where("date", ">=", dateRange.start)
     .where("date", "<=", dateRange.end)
     .execute();

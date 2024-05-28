@@ -62,11 +62,11 @@ const Page: React.FC<PageProps> = () => {
                 last 12 days
               </li>
               <li>
-                - Added <b>recent score totals</b> to the{" "}
+                - Added <b>recent score averages</b> to the{" "}
                 <Link className="underline" href="/connections/results">
                   Recent Results
                 </Link>{" "}
-                page, this shows the cumulative score of all completions in the
+                page, this shows the average score of all completions in the
                 last 12 days per person
               </li>
             </ul>

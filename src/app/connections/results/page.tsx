@@ -6,7 +6,7 @@ import { Tooltip } from "@/components/ToolTip";
 import {
   getConnectionsResults,
   getUserResultCount,
-  getUserTotalScores,
+  getUserScoreAverages,
 } from "@/db/repositories";
 import { cn } from "@/util";
 
@@ -35,7 +35,7 @@ const Page: React.FC<PageProps> = async () => {
       end: now.toJSON(),
     },
   });
-  const totalScores = await getUserTotalScores({
+  const totalScores = await getUserScoreAverages({
     dateRange: {
       start: now.minusDays(resultDays).toJSON(),
       end: now.toJSON(),
@@ -131,12 +131,12 @@ const Page: React.FC<PageProps> = async () => {
 
       <div className="w-full flex flex-col justify-center mb-6">
         <h2 className="text-lg place-self-center">
-          Player total scores <small>(Last 12 days)</small>
+          Player score averages <small>(Last 12 days)</small>
         </h2>
         <div className="flex flex-col items-start">
           {totalScores.map((scoreTotal) => (
             <div key={scoreTotal.name} className="flex gap-2">
-              <p>{scoreTotal.score}</p>
+              <p>{parseFloat(scoreTotal.scoreAverage).toFixed(1)}</p>
               <p>{scoreTotal.name}</p>
             </div>
           ))}
