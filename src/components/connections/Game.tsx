@@ -111,6 +111,8 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
   }, [gameComplete, userResult]);
 
   useEffect(() => {
+    console.log({ gameComplete, userResult });
+
     if (gameComplete && !userResult) {
       createConnectionsResult({
         date,
