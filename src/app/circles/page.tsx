@@ -52,7 +52,10 @@ const Page: React.FC<PageProps> = async () => {
     circles,
     (circle) => circle.isSystem,
   );
-  console.log({ userCircles, globalCircles });
+
+  if (!session) {
+    return <h2>Please sign in to view Circles</h2>;
+  }
 
   return (
     <div className="flex w-full flex-col gap-2">
