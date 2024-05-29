@@ -120,11 +120,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
   }, [completedGroups, categories]);
 
   useEffect(() => {
-    console.log({ gameComplete, userResult });
-
     if (gameComplete && !userResult) {
-      console.log("uploading result");
-
       createConnectionsResult({
         date,
         score: Math.round(score),
@@ -320,7 +316,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col w-full items-center gap-4">
       <div className="relative w-full aspect-square">
         {!gameComplete &&
           gameGrid.map((label) => (

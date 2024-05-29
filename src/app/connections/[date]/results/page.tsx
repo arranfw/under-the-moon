@@ -43,29 +43,27 @@ const Page = async ({ params }: { params: { date: string } }) => {
 
   return (
     <>
-      <div className="flex items-center flex-col gap-6 mb-6">
-        <div className="flex w-full justify-between items-center">
-          <ConnectionsDateNavLink
-            href={`/connections/${date.minusDays(1).toJSON()}/results`}
-            icon={faAngleLeft}
-          />
-          <p className="text-lg">{todayString}</p>
-          <ConnectionsDateNavLink
-            href={`/connections/${date.plusDays(1).toJSON()}/results`}
-            icon={faAngleRight}
-          />
-        </div>
-        <div className="grid grid-cols-3 w-full">
-          <Link
-            className={cn("places-self-start", "")}
-            href={`/connections/${date}`}
-          >
-            <FontAwesomeIcon icon={faTableCellsLarge} /> Back to game
-          </Link>
-          <p className="place-self-center">
-            Puzzle #{gameDateToGameNumber(params.date)}
-          </p>{" "}
-        </div>
+      <div className="flex w-full justify-between items-center">
+        <ConnectionsDateNavLink
+          href={`/connections/${date.minusDays(1).toJSON()}/results`}
+          icon={faAngleLeft}
+        />
+        <p className="text-lg">{todayString}</p>
+        <ConnectionsDateNavLink
+          href={`/connections/${date.plusDays(1).toJSON()}/results`}
+          icon={faAngleRight}
+        />
+      </div>
+      <div className="grid grid-cols-3 w-full">
+        <Link
+          className={cn("places-self-start", "")}
+          href={`/connections/${date}`}
+        >
+          <FontAwesomeIcon icon={faTableCellsLarge} /> Back to game
+        </Link>
+        <p className="place-self-center">
+          Puzzle #{gameDateToGameNumber(params.date)}
+        </p>{" "}
       </div>
 
       {results.length === 0 && (
@@ -77,7 +75,7 @@ const Page = async ({ params }: { params: { date: string } }) => {
         <div
           key={result.id}
           className={cn(
-            "rounded-md m-1 p-4 flex items-center justify-between gap-4 relative",
+            "rounded-md m-1 p-4 w-full flex items-center justify-between gap-4 relative",
             "border-zinc-400 border-opacity-50 border dark:border-zinc-800",
           )}
         >

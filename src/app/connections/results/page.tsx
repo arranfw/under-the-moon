@@ -49,7 +49,7 @@ const Page: React.FC<PageProps> = async () => {
     )[0];
 
   return (
-    <div className="flex flex-col gap-4">
+    <>
       <div className="w-full flex justify-center mb-6">
         <h2 className="text-lg">
           Recent results <small>(Last 12 days)</small>
@@ -142,7 +142,7 @@ const Page: React.FC<PageProps> = async () => {
           ))}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -46,7 +46,12 @@ const config: Config = {
         "connections-button-active": "rgb(255, 255, 255)",
       },
       width: {
+        "130": "32.5rem",
         "120": "30rem",
+        "88": "22rem",
+      },
+      maxWidth: {
+        "130": "32.5rem",
         "88": "22rem",
       },
       top: {

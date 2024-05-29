@@ -52,26 +52,24 @@ const Connections = async ({ params }: { params: { date: string } }) => {
 
   return (
     <>
-      <div className="flex items-center flex-col gap-6 mb-6">
-        <div className="flex w-full justify-between items-center">
-          <ConnectionsDateNavLink
-            href={`/connections/${date.minusDays(1).toJSON()}`}
-            icon={faAngleLeft}
-          />
-          <p className="text-lg">{todayString}</p>
-          <ConnectionsDateNavLink
-            href={`/connections/${date.plusDays(1).toJSON()}`}
-            icon={faAngleRight}
-          />
-        </div>
-        <div className="grid grid-cols-3 w-full">
-          <Link className={cn("")} href={`/connections/${date}/results`}>
-            <FontAwesomeIcon icon={faListSquares} /> Leaderboard
-          </Link>
-          <p className="place-self-center">
-            Puzzle #{gameDateToGameNumber(params.date)}
-          </p>
-        </div>
+      <div className="flex w-full justify-between items-center">
+        <ConnectionsDateNavLink
+          href={`/connections/${date.minusDays(1).toJSON()}`}
+          icon={faAngleLeft}
+        />
+        <p className="text-lg">{todayString}</p>
+        <ConnectionsDateNavLink
+          href={`/connections/${date.plusDays(1).toJSON()}`}
+          icon={faAngleRight}
+        />
+      </div>
+      <div className="grid grid-cols-3 w-full">
+        <Link className={cn("")} href={`/connections/${date}/results`}>
+          <FontAwesomeIcon icon={faListSquares} /> Leaderboard
+        </Link>
+        <p className="place-self-center">
+          Puzzle #{gameDateToGameNumber(params.date)}
+        </p>
       </div>
       <ConnectionsGame
         categories={gameData.categories}
@@ -83,8 +81,6 @@ const Connections = async ({ params }: { params: { date: string } }) => {
           if (!session?.user?.id || userResult) {
             return;
           }
-
-          console.log("server creating result", { result });
 
           return createConnectionsResult({
             ...result,
