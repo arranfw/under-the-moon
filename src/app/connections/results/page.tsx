@@ -8,7 +8,7 @@ import {
   getUserResultCount,
   getUserScoreAverages,
 } from "@/db/repositories";
-import { cn } from "@/util";
+import { cn, nameToFallbackText } from "@/util";
 
 import { ChronoField, LocalDate } from "@js-joda/core";
 import { partition, times } from "lodash";
@@ -82,14 +82,8 @@ const Page: React.FC<PageProps> = async () => {
                           result.score === 100,
                       })}
                       size={24}
-                      imageUrl={result.image || ""}
-                      fallbackText={
-                        result.name
-                          ?.split(" ")
-                          .slice(0, 2)
-                          .map((s) => s.charAt(0))
-                          .join("") || ""
-                      }
+                      imageUrl={result.image}
+                      fallbackText={nameToFallbackText(result.name)}
                     />
                   </Tooltip>
                 ),

@@ -30,7 +30,7 @@ interface ConnectionsGameProps {
   date: string;
   userResult: ConnectionsResults | undefined | null;
   createConnectionsResult: (
-    result: Omit<NewConnectionsResults, "userId" | "createdAt" | "streak">,
+    result: Omit<NewConnectionsResults, "userId">,
   ) => Promise<ConnectionsResults | undefined>;
 }
 

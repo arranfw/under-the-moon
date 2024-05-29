@@ -42,12 +42,36 @@ interface ConnectionsResultsTable {
   hintCount: number;
   date: string;
   gameNumber: number;
-  createdAt: string | null;
+  createdAt: Generated<string>;
   streak: number | null;
 }
 export type ConnectionsResults = Selectable<ConnectionsResultsTable>;
 export type NewConnectionsResults = Insertable<ConnectionsResultsTable>;
 export type ConnectionsResultsUpdate = Updateable<ConnectionsResultsTable>;
+
+interface CirclesTable {
+  id: Generated<string>;
+  name: string;
+  description: string | null;
+  createdBy: string;
+  isSystem: Generated<boolean>;
+  createdAt: Generated<string>;
+  updatedAt: string | null;
+}
+
+export type Circles = Selectable<CirclesTable>;
+export type NewCircles = Insertable<CirclesTable>;
+export type CirclesUpdate = Updateable<CirclesTable>;
+
+interface CircleUsersTable {
+  circleId: string;
+  userId: string;
+  createdAt: Generated<string>;
+}
+
+export type CircleUsers = Selectable<CircleUsersTable>;
+export type NewCircleUsers = Insertable<CircleUsersTable>;
+export type CircleUsersUpdate = Updateable<CircleUsersTable>;
 
 export interface Database {
   User: UserTable;
@@ -55,4 +79,6 @@ export interface Database {
   Session: SessionTable;
   VerificationToken: VerificationTokenTable;
   ConnectionsResults: ConnectionsResultsTable;
+  Circles: CirclesTable;
+  CircleUsers: CircleUsersTable;
 }

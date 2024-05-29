@@ -17,7 +17,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   const [open, setOpen] = useState(false);
 
   return (
-    <RadixTooltip.Provider>
+    <RadixTooltip.Provider delayDuration={200}>
       <RadixTooltip.Root open={open} onOpenChange={setOpen}>
         <RadixTooltip.Trigger
           onClick={() => setOpen((prevOpen) => !prevOpen)}

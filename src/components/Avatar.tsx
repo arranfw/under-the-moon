@@ -6,8 +6,8 @@ import { cn } from "@/util";
 
 import * as RadixAvatar from "@radix-ui/react-avatar";
 
-interface AvatarProps {
-  imageUrl: string;
+export interface AvatarProps {
+  imageUrl: string | null;
   fallbackText: string;
   size?: number;
   className?: string;
@@ -30,7 +30,7 @@ export const Avatar: React.FC<AvatarProps> = ({
       >
         <RadixAvatar.Image
           className="AvatarImage"
-          src={imageUrl}
+          src={imageUrl || undefined}
           alt={fallbackText}
         />
         <RadixAvatar.Fallback className="AvatarFallback" delayMs={600}>

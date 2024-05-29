@@ -11,6 +11,8 @@ types.setTypeParser(types.builtins.DATE, (val) =>
   LocalDate.parse(val).toJSON(),
 );
 
+types.setTypeParser(types.builtins.INT8, (val) => Number(val));
+
 export const pool = new Pool({
   host: process.env.DATABASE_HOST || "127.0.0.1",
   user: process.env.DATABASE_USER || "admin",
