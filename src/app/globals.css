@@ -11,6 +11,8 @@
   --connections-green: 160, 195, 90;
   --connections-blue: 176, 196, 239;
   --connections-purple: 186, 129, 197;
+
+  --border-rgb: 156, 163, 175;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,6 +25,8 @@
     --connections-green: 85, 122, 11;
     --connections-blue: 26, 54, 115;
     --connections-purple: 77, 14, 89;
+
+    --border-rgb: 31, 41, 55 ;
   }
 }
 

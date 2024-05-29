@@ -11,7 +11,5 @@ interface SeparatorProps {
 }
 
 export const Divider: React.FC<SeparatorProps> = ({ className }) => (
-  <RadixSeparator.Root
-    className={cn("SeparatorRoot bg-gray-400 dark:bg-gray-800", className)}
-  />
+  <RadixSeparator.Root className={cn("SeparatorRoot bg-border", className)} />
 );

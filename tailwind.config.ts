@@ -40,10 +40,15 @@ const config: Config = {
         "connections-blue": "rgb(var(--connections-blue))",
         "connections-purple": "rgb(var(--connections-purple))",
         base: "rgb(var(--background-start-rgb))",
+        border: "rgb(var(--border-rgb))",
+      },
+      borderColor: {
+        border: "rgb(var(--border-rgb))",
       },
       colors: {
         "connections-button": "rgb(0, 0, 0)",
         "connections-button-active": "rgb(255, 255, 255)",
+        border: "rgb(var(--border-rgb))",
       },
       width: {
         "130": "32.5rem",

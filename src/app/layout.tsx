@@ -56,7 +56,7 @@ export default async function RootLayout({
             <SpeedInsights />
           </div>
         </main>
-        <footer className="backdrop-blur-lg backdrop-brightness-105 grid w-full px-2 py-1 border-t border-gray-400 dark:border-gray-800">
+        <footer className="backdrop-blur-lg backdrop-brightness-105 grid w-full px-2 py-1 border-t border border-border">
           <div className="place-self-end">
             <Link href="/changelog">Changelog</Link>
           </div>
