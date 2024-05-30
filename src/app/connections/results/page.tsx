@@ -78,7 +78,7 @@ const Page: React.FC<PageProps> = async () => {
                   >
                     <Avatar
                       className={cn("text-xs border border-slate-600", {
-                        "outline outline-yellow-600 dark:outline-yellow-400":
+                        "border-2 border-yellow-500 dark:border-yellow-400":
                           result.score === 100,
                       })}
                       size={24}
