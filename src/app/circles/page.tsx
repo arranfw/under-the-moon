@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { Circle } from "@/components/circles/Circle";
 import {
   addUserToCircle,
+  getCircle,
   getCircles,
   getUserCircles,
   removeUserFromCircle,
@@ -35,12 +36,23 @@ const Page: React.FC<PageProps> = async () => {
     revalidatePath("/circles");
   };
 
-  const joinCircle = async (formData: FormData) => {
+  const joinCircle = async (prevState: any, formData: FormData) => {
     "use server";
     const circleId = formData.get("circleId");
+    const password = formData.get("password");
     if (!session?.user?.id || typeof circleId !== "string") {
       return;
     }
+
+    const circle = await getCircle(circleId);
+    if (circle.password) {
+      if (typeof password !== "string" || circle.password !== password) {
+        return {
+          message: "Invalid password",
+        };
+      }
+    }
+
     await addUserToCircle({
       circleId,
       userId: session?.user.id,

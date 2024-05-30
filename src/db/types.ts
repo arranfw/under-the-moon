@@ -55,6 +55,7 @@ interface CirclesTable {
   description: string | null;
   createdBy: string;
   isSystem: Generated<boolean>;
+  password: string | null;
   createdAt: Generated<string>;
   updatedAt: string | null;
 }

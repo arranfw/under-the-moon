@@ -15,6 +15,14 @@ export const getCircles = () =>
       "Circles.isSystem",
       "createdByUser.name as createdByUserName",
       "createdByUser.image as createdByUserImage",
+      eb
+        .case()
+        .when("Circles.password", "is not", null)
+        .then(true)
+        .when("Circles.password", "is", null)
+        .then(false)
+        .end()
+        .as("hasPassword"),
       eb.fn.agg<number>("count", ["CircleUsers.userId"]).as("userCount"),
       jsonArrayFrom(
         eb
@@ -27,6 +35,15 @@ export const getCircles = () =>
     ])
     .groupBy(["Circles.id", "createdByUserName", "createdByUserImage"])
     .execute();
+
+export const getCircle = async (circleId: string) =>
+  (
+    await db
+      .selectFrom("Circles")
+      .where("Circles.id", "=", circleId)
+      .selectAll()
+      .execute()
+  )[0];
 
 export const getUserCircles = (userId: string) =>
   db

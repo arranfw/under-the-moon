@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 
 import { cn, nameToFallbackText } from "@/util";
@@ -6,7 +8,10 @@ import { Avatar, AvatarProps } from "../Avatar";
 import { Divider } from "../Divider";
 import { SubmitButton } from "../SubmitButton";
 import { Tooltip } from "../ToolTip";
+import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import pluralize from "pluralize";
+import { useFormState } from "react-dom";
 
 interface CircleAvatarProps extends React.PropsWithChildren {
   imageUrl: AvatarProps["imageUrl"];
@@ -34,7 +39,7 @@ const CircleContainer: React.FC<CircleContainerProps> = ({ children }) => {
     <div
       className={cn(
         "flex justify-between",
-        "border border-border rounded-md p-4",
+        "border border-border rounded-md p-4 min-h-40",
       )}
     >
       {children}
@@ -48,6 +53,7 @@ interface CircleProps {
     name: string | null;
     description: string | null;
     userCount: number;
+    hasPassword: boolean | null;
     users: {
       id: string | null;
       image: string | null;
@@ -58,7 +64,10 @@ interface CircleProps {
     id: string | null;
   }[];
   leaveCircle: (formData: FormData) => void;
-  joinCircle: (formData: FormData) => void;
+  joinCircle: (
+    prevState: any,
+    formData: FormData,
+  ) => Promise<{ message?: string } | undefined>;
   createdBy?: {
     name: string | null;
     imageUrl: string | null;
@@ -72,17 +81,24 @@ export const Circle: React.FC<CircleProps> = ({
   joinCircle,
   createdBy,
 }) => {
+  const isJoined = currentCircles.some((c) => c.id === circle.id);
+  const [joinFormState, joinFormAction] = useFormState(joinCircle, {
+    message: "",
+  });
+
   return (
     <CircleContainer key={circle.id}>
-      <div>
-        <h3>
-          {circle.name}
-          {circle.description && <small>: {circle.description}</small>}
-        </h3>
+      <div className="flex flex-col">
+        <div>
+          <h3>{circle.name}</h3>
+          {circle.description && (
+            <p className="text-sm">{circle.description}</p>
+          )}
+        </div>
 
         <Divider className="my-2" />
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 grow">
           {circle.users.map((user) => (
             <CircleAvatar
               key={user.id}
@@ -113,13 +129,46 @@ export const Circle: React.FC<CircleProps> = ({
       </div>
 
       <div className="flex items-center justify-end">
-        {currentCircles.some((userCircle) => userCircle.id === circle.id) ? (
-          <form action={leaveCircle}>
-            <input type="hidden" name="circleId" value={circle.id as string} />
-            <SubmitButton tone="critical">Leave</SubmitButton>
-          </form>
+        {isJoined ? (
+          <div className="grid grid-rows-3 h-full items-end justify-items-center">
+            <form action={leaveCircle} className="row-span-2">
+              <input
+                type="hidden"
+                name="circleId"
+                value={circle.id as string}
+              />
+              <SubmitButton tone="critical">Leave</SubmitButton>
+            </form>
+            <p className="text-sm">
+              Joined{" "}
+              <FontAwesomeIcon
+                icon={faCheckCircle}
+                className="text-green-500"
+              />
+            </p>
+          </div>
         ) : (
-          <form action={joinCircle}>
+          <form action={joinFormAction} className="flex gap-2 items-center">
+            {circle.hasPassword && (
+              <div className="flex flex-col">
+                <input
+                  type="password"
+                  name="password"
+                  className={cn(
+                    "bg-transparent rounded border border-border",
+                    "px-2 w-40",
+                  )}
+                  required
+                  defaultValue=""
+                  placeholder="Password"
+                />
+                {joinFormState?.message && (
+                  <p className="text-xs text-red-500">
+                    {joinFormState.message}
+                  </p>
+                )}
+              </div>
+            )}
             <input type="hidden" name="circleId" value={circle.id as string} />
             <SubmitButton tone="formAccent">Join</SubmitButton>
           </form>
