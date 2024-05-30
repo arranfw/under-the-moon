@@ -16,7 +16,7 @@ export const SubmitButton: React.FC<LeaveButtonProps> = ({
 
   return (
     <>
-      <Button tone={tone} variant="solid" loading={pending}>
+      <Button tone={tone} variant="solid" loading={pending} disabled={pending}>
         {children}
       </Button>
     </>
