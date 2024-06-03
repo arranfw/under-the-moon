@@ -51,6 +51,7 @@ const Page = async ({ params }: { params: { date: string } }) => {
           column: "score",
           dir: "desc",
         },
+        includeCircles: true,
       })
     : null;
 
