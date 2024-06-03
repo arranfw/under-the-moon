@@ -38,6 +38,7 @@ const Page: React.FC<PageProps> = async () => {
         },
         dateRange: {
           start: now.minusDays(resultDays).toJSON(),
+          end: now.toJSON(),
         },
       })
     : null;
@@ -65,6 +66,10 @@ const Page: React.FC<PageProps> = async () => {
       recentResults,
       (result) => LocalDate.parse(result.date).toJSON() === date.toJSON(),
     )[0];
+
+  if (!session) {
+    return <h2>Please sign in to view Results</h2>;
+  }
 
   return (
     <>

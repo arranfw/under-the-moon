@@ -51,6 +51,7 @@ const config: Config = {
         border: "rgb(var(--border-rgb))",
       },
       width: {
+        "140": "35rem",
         "130": "32.5rem",
         "120": "30rem",
         "88": "22rem",

@@ -48,7 +48,7 @@ export default async function RootLayout({
         <main className="overflow-y-auto grow md:p-12 px-4 py-6">
           <div
             className={cn(
-              "h-full w-full md:w-130  flex flex-col items-center",
+              "h-full w-full md:w-140 flex flex-col items-center",
               "m-auto gap-6",
             )}
           >
