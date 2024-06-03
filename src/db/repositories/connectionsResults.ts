@@ -5,32 +5,51 @@ import { ConnectionsResults, NewConnectionsResults } from "../types";
 import { LocalDate } from "@js-joda/core";
 import { OrderByDirection } from "kysely/dist/cjs/parser/order-by-parser";
 
-export const getConnectionsResults = ({
+export const getConnectionsResults = async ({
   date,
   userId,
   orderBy,
   dateRange,
 }: {
   date?: string;
-  userId?: string;
+  userId: string;
   orderBy?: {
     column: keyof ConnectionsResults;
     dir: OrderByDirection;
   };
   dateRange?: { start?: string; end?: string };
+  circleId?: string;
 }) => {
+  const requestedCircles = await db
+    .selectFrom("CircleUsers")
+    .where("CircleUsers.userId", "=", userId)
+    .select("CircleUsers.circleId")
+    .execute();
+
   let query = db
     .selectFrom("ConnectionsResults")
     .selectAll("ConnectionsResults")
     .leftJoin("User", "ConnectionsResults.userId", "User.id")
+    .fullJoin("CircleUsers", "ConnectionsResults.userId", "CircleUsers.userId")
     .select(["User.name", "User.image"]);
+
+  if (requestedCircles.length === 0) {
+    query = query.where("ConnectionsResults.userId", "=", userId);
+  } else {
+    query = query.where((eb) =>
+      eb.or([
+        eb("ConnectionsResults.userId", "=", userId),
+        eb(
+          "CircleUsers.circleId",
+          "in",
+          requestedCircles.map((c) => c.circleId),
+        ),
+      ]),
+    );
+  }
 
   if (date) {
     query = query.where("date", "=", date);
-  }
-
-  if (userId) {
-    query = query.where("userId", "=", userId);
   }
 
   if (dateRange) {
@@ -49,22 +68,6 @@ export const getConnectionsResults = ({
 
   return query.execute();
 };
-
-export const getConnectionsStreaks = () =>
-  db
-    .selectFrom("ConnectionsResults")
-    .leftJoin("User", "ConnectionsResults.userId", "User.id")
-    .select(({ fn }) => [
-      "userId",
-      "User.name",
-      "User.image",
-      fn.agg<string>("max", ["ConnectionsResults.streak"]).as("streak"),
-      fn.agg<string>("max", ["ConnectionsResults.date"]).as("date"),
-    ])
-    .where("ConnectionsResults.streak", ">=", 3)
-    .groupBy(["userId", "User.name", "User.image"])
-    .orderBy("streak", "desc")
-    .execute();
 
 export const getUserScoreAverages = ({
   dateRange,

@@ -1,5 +1,4 @@
 import type { Generated, Insertable, Selectable, Updateable } from "kysely";
-import { Nullable } from "kysely/dist/cjs/util/type-utils";
 
 interface UserTable {
   id: Generated<string>;
@@ -8,6 +7,11 @@ interface UserTable {
   emailVerified: string | null;
   image: string | null;
 }
+
+export type User = Selectable<UserTable>;
+export type NewUser = Insertable<UserTable>;
+export type UpdateUser = Updateable<UserTable>;
+
 interface AccountTable {
   id: Generated<string>;
   userId: string;

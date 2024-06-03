@@ -1,6 +1,8 @@
 "use server";
 
 import { db } from "..";
+import { NewCircles } from "../types";
+import { getSingle } from "../utils";
 import { jsonArrayFrom } from "kysely/helpers/postgres";
 
 export const getCircles = () =>
@@ -37,21 +39,21 @@ export const getCircles = () =>
     .execute();
 
 export const getCircle = async (circleId: string) =>
-  (
-    await db
-      .selectFrom("Circles")
-      .where("Circles.id", "=", circleId)
-      .selectAll()
-      .execute()
-  )[0];
+  db
+    .selectFrom("Circles")
+    .where("Circles.id", "=", circleId)
+    .selectAll()
+    .execute()
+    .then(getSingle);
+
+export const createCircle = async (values: NewCircles) =>
+  (await db.insertInto("Circles").values(values).returningAll().execute())[0];
 
 export const getUserCircles = (userId: string) =>
   db
-    .selectFrom("User")
-    .leftJoin("CircleUsers", "User.id", "CircleUsers.userId")
-    .leftJoin("Circles", "CircleUsers.circleId", "Circles.id")
-    .where("User.id", "=", userId)
-    .select("Circles.id")
+    .selectFrom("CircleUsers")
+    .where("CircleUsers.userId", "=", userId)
+    .select("CircleUsers.circleId")
     .execute();
 
 export const addUserToCircle = ({

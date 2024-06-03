@@ -1,5 +1,6 @@
 import React from "react";
 
+import { auth } from "@/auth";
 import { Avatar } from "@/components/Avatar";
 import { Divider } from "@/components/Divider";
 import { Tooltip } from "@/components/ToolTip";
@@ -18,17 +19,21 @@ export const revalidate = 60;
 interface PageProps {}
 
 const Page: React.FC<PageProps> = async () => {
+  const session = await auth();
   const now = LocalDate.now();
   const resultDays = 12;
-  const recentResults = await getConnectionsResults({
-    orderBy: {
-      column: "score",
-      dir: "desc",
-    },
-    dateRange: {
-      start: now.minusDays(resultDays).toJSON(),
-    },
-  });
+  const recentResults = session?.user?.id
+    ? await getConnectionsResults({
+        userId: session?.user?.id,
+        orderBy: {
+          column: "score",
+          dir: "desc",
+        },
+        dateRange: {
+          start: now.minusDays(resultDays).toJSON(),
+        },
+      })
+    : null;
   const resultCount = await getUserResultCount({
     dateRange: {
       start: now.minusDays(resultDays).toJSON(),

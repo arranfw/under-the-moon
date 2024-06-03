@@ -61,7 +61,7 @@ interface CircleProps {
     }[];
   };
   currentCircles: {
-    id: string | null;
+    circleId: string | null;
   }[];
   leaveCircle: (formData: FormData) => void;
   joinCircle: (
@@ -81,7 +81,7 @@ export const Circle: React.FC<CircleProps> = ({
   joinCircle,
   createdBy,
 }) => {
-  const isJoined = currentCircles.some((c) => c.id === circle.id);
+  const isJoined = currentCircles.some((c) => c.circleId === circle.id);
   const [joinFormState, joinFormAction] = useFormState(joinCircle, {
     message: "",
   });

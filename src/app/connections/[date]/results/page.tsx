@@ -18,28 +18,38 @@ import {
   faTableCellsLarge,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { LocalDate, ZonedDateTime, ZoneId } from "@js-joda/core";
+import { LocalDate } from "@js-joda/core";
 
 import "@js-joda/locale_en";
 
 import React from "react";
 
-import Link from "next/link";
+import { auth } from "@/auth";
+import { Link } from "@/components/Link";
+import { getUserCircles } from "@/db/repositories/circles";
 
 const Page = async ({ params }: { params: { date: string } }) => {
+  const session = await auth();
   const date =
     typeof params.date === "string"
       ? LocalDate.parse(params.date)
       : LocalDate.now();
   const todayString = date.format(dayMonthYearFormatter);
 
-  const results = await getConnectionsResults({
-    date: params.date,
-    orderBy: {
-      column: "score",
-      dir: "desc",
-    },
-  });
+  const userCircles = session?.user?.id
+    ? await getUserCircles(session?.user?.id)
+    : null;
+
+  const results = session?.user?.id
+    ? await getConnectionsResults({
+        userId: session?.user.id,
+        date: params.date,
+        orderBy: {
+          column: "score",
+          dir: "desc",
+        },
+      })
+    : null;
 
   return (
     <>
@@ -56,6 +66,7 @@ const Page = async ({ params }: { params: { date: string } }) => {
       </div>
       <div className="grid grid-cols-3 w-full">
         <Link
+          variant="no-underline"
           className={cn("places-self-start", "")}
           href={`/connections/${date}`}
         >
@@ -66,12 +77,25 @@ const Page = async ({ params }: { params: { date: string } }) => {
         </p>{" "}
       </div>
 
-      {results.length === 0 && (
+      {!session?.user?.id && (
+        <div className="w-full h-56 grid place-content-center text-xl">
+          Please log in to see results
+        </div>
+      )}
+
+      {userCircles?.length === 0 && (
+        <div className="w-full">
+          <Link href={`/circles`}>Join a circle</Link> to see other player's
+          results
+        </div>
+      )}
+
+      {results?.length === 0 && (
         <div className="w-full h-56 grid place-content-center text-xl">
           No results yet!
         </div>
       )}
-      {results.map((result, i) => (
+      {results?.map((result, i) => (
         <div
           key={result.id}
           className={cn(
