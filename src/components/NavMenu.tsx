@@ -103,9 +103,9 @@ export const NavMenu: React.FC<NavMenuProps> = () => {
 
               <Divider className="my-2" />
 
-              {/* <NavItem href={`/circles`} label="Circles" />
+              <NavItem href={`/circles`} label="Circles" />
 
-              <Divider className="my-2" /> */}
+              <Divider className="my-2" />
 
               <NavItem href={`/changelog`} label="What's new" />
             </NavigationMenu.List>
