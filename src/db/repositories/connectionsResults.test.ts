@@ -290,6 +290,53 @@ describe("connectionsResults repository", () => {
         }),
       ]);
     });
+
+    it("returns results for users in global circles", async () => {
+      const user1 = await createUser(userFactory.build());
+      const user2 = await createUser(userFactory.build());
+      const user3 = await createUser(userFactory.build());
+      const circle2 = await createCircle(
+        circleFactory.build({
+          isSystem: true,
+        }),
+      );
+
+      await addUserToCircle({
+        userId: user2.id,
+        circleId: circle2.id,
+      });
+      await addUserToCircle({
+        userId: user3.id,
+        circleId: circle2.id,
+      });
+
+      await createConnectionsResult(
+        connectionsResultsFactory.build({
+          userId: user2.id,
+          date: LocalDate.now().toJSON(),
+        }),
+      );
+      await createConnectionsResult(
+        connectionsResultsFactory.build({
+          userId: user3.id,
+          date: LocalDate.now().toJSON(),
+        }),
+      );
+
+      const results = await getConnectionsResults({
+        userId: user1.id,
+      });
+
+      expect(results).toHaveLength(2);
+      expect(results).toIncludeAllMembers([
+        expect.objectContaining({
+          userId: user3.id,
+        }),
+        expect.objectContaining({
+          userId: user2.id,
+        }),
+      ]);
+    });
   });
 
   describe("createConnectionsResult", () => {

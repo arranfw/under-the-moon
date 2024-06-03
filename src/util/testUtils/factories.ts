@@ -1,4 +1,4 @@
-import { NewConnectionsResults, NewUser } from "@/db/types";
+import { NewCircles, NewConnectionsResults, NewUser } from "@/db/types";
 
 import { faker } from "@faker-js/faker";
 import { ZonedDateTime } from "@js-joda/core";
@@ -12,7 +12,7 @@ export const userFactory = Factory.define<NewUser>("User").attrs({
   image: faker.image.urlPlaceholder,
 });
 
-export const circleFactory = Factory.define("Circles").attrs({
+export const circleFactory = Factory.define<NewCircles>("Circles").attrs({
   id: faker.string.uuid,
   name: faker.company.name,
   description: faker.company.catchPhrase,

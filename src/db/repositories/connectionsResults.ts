@@ -32,14 +32,22 @@ export const getConnectionsResults = async ({
     .selectAll("ConnectionsResults")
     .leftJoin("User", "ConnectionsResults.userId", "User.id")
     .fullJoin("CircleUsers", "ConnectionsResults.userId", "CircleUsers.userId")
-    .select(["User.name", "User.image"]);
+    .leftJoin("Circles", "Circles.id", "CircleUsers.circleId")
+    .select(["User.name", "User.image"])
+    .select(["Circles.isSystem"]);
 
   if (requestedCircles.length === 0) {
-    query = query.where("ConnectionsResults.userId", "=", userId);
+    query = query.where((eb) =>
+      eb.or([
+        eb("ConnectionsResults.userId", "=", userId),
+        eb("Circles.isSystem", "=", true),
+      ]),
+    );
   } else {
     query = query.where((eb) =>
       eb.or([
         eb("ConnectionsResults.userId", "=", userId),
+        eb("Circles.isSystem", "=", true),
         eb(
           "CircleUsers.circleId",
           "in",
