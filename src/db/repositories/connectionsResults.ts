@@ -2,7 +2,7 @@
 
 import { db } from "..";
 import { ConnectionsResults, NewConnectionsResults } from "../types";
-import { mutualCircleUsers } from "./circles";
+import { mutualCircleUsers as getMutualCircleUsers } from "./circles";
 import { LocalDate } from "@js-joda/core";
 import { OrderByDirection } from "kysely/dist/cjs/parser/order-by-parser";
 
@@ -21,7 +21,7 @@ export const getConnectionsResults = async ({
   dateRange?: { start?: string; end?: string };
   circleId?: string;
 }) => {
-  const resultsInCircles = await mutualCircleUsers(userId);
+  const mutualUserCircles = await getMutualCircleUsers(userId);
 
   let query = db
     .selectFrom("ConnectionsResults")
@@ -31,7 +31,7 @@ export const getConnectionsResults = async ({
     .where(
       "User.id",
       "in",
-      resultsInCircles.map((r) => r.id),
+      mutualUserCircles.map((r) => r.id),
     );
 
   if (date) {
@@ -48,9 +48,10 @@ export const getConnectionsResults = async ({
   }
 
   if (orderBy) {
-    query = query
-      .orderBy([`${orderBy.column} ${orderBy.dir}`, "createdAt asc"])
-      .distinctOn([orderBy.column]);
+    query = query.orderBy([
+      `${orderBy.column} ${orderBy.dir}`,
+      "createdAt asc",
+    ]);
   }
 
   return query.execute();
@@ -63,7 +64,7 @@ export const getUserScoreAverages = async ({
   userId: string;
   dateRange: { start: string; end: string };
 }) => {
-  const resultsInCircles = await mutualCircleUsers(userId);
+  const mutualUserCircles = await getMutualCircleUsers(userId);
   return db
     .selectFrom("ConnectionsResults")
     .leftJoin("User", "ConnectionsResults.userId", "User.id")
@@ -80,7 +81,7 @@ export const getUserScoreAverages = async ({
     .where(
       "User.id",
       "in",
-      resultsInCircles.map((r) => r.id),
+      mutualUserCircles.map((r) => r.id),
     )
     .execute();
 };
@@ -92,7 +93,7 @@ export const getUserResultCount = async ({
   userId: string;
   dateRange: { start: string; end: string };
 }) => {
-  const resultsInCircles = await mutualCircleUsers(userId);
+  const mutualUserCircles = await getMutualCircleUsers(userId);
   return db
     .selectFrom("ConnectionsResults")
     .leftJoin("User", "ConnectionsResults.userId", "User.id")
@@ -109,7 +110,7 @@ export const getUserResultCount = async ({
     .where(
       "User.id",
       "in",
-      resultsInCircles.map((r) => r.id),
+      mutualUserCircles.map((r) => r.id),
     )
     .execute();
 };

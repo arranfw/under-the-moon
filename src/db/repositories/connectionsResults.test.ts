@@ -337,6 +337,48 @@ describe("connectionsResults repository", () => {
         }),
       ]);
     });
+
+    it("returns results ordered by score", async () => {
+      const user = await createUser(userFactory.build());
+      const now = LocalDate.now();
+
+      await Promise.all(
+        connectionsResultsFactory
+          .buildList(3, {
+            userId: user.id,
+          })
+          .map((result, i) =>
+            createConnectionsResult({
+              ...result,
+              date: now.minusDays(i).toJSON(),
+              score: Math.round(i / 2),
+            }),
+          ),
+      );
+
+      const results = await getConnectionsResults({
+        userId: user.id,
+        orderBy: {
+          column: "score",
+          dir: "desc",
+        },
+      });
+
+      expect(results).toHaveLength(3);
+      expect(results).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            score: 1,
+          }),
+          expect.objectContaining({
+            score: 1,
+          }),
+          expect.objectContaining({
+            score: 0,
+          }),
+        ]),
+      );
+    });
   });
 
   describe("createConnectionsResult", () => {
