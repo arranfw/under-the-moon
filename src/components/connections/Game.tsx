@@ -17,6 +17,7 @@ import { GameSummary } from "./GameSummary";
 import { ConnectionsItem } from "./Item";
 import { MistakesRemaining } from "./MistakesRemaining";
 import { gameDateToGameNumber } from "./util";
+import { LocalDate } from "@js-joda/core";
 import { intersection, isEmpty } from "lodash";
 
 const JIGGLE_CORRECT_DURATION = 300;
@@ -41,8 +42,9 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
   userResult,
   createConnectionsResult,
 }) => {
+  const today = LocalDate.now();
   const [isAutoCompleting, setIsAutoCompleting] = useState(false);
-  const [gameComplete, setGameComplete] = useState(Boolean(userResult));
+  const [gameComplete, setGameComplete] = useState(false);
   const initialGameState: GameState = {
     date,
     selected: [],
@@ -79,7 +81,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
 
   useEffect(() => {
     // pull game state from database if it exists, otherwise load from local storage
-    if (userResult) {
+    if (userResult && userResult.date === today.toJSON()) {
       gameDispatch({
         type: GameActionType.LOAD_STATE,
 

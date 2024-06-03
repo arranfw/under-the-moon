@@ -7,12 +7,10 @@ import { LocalDate } from "@js-joda/core";
 import { OrderByDirection } from "kysely/dist/cjs/parser/order-by-parser";
 
 export const getConnectionsResults = async ({
-  date,
   userId,
   orderBy,
   dateRange,
 }: {
-  date?: string;
   userId: string;
   orderBy?: {
     column: keyof ConnectionsResults;
@@ -33,10 +31,6 @@ export const getConnectionsResults = async ({
       "in",
       mutualUserCircles.map((r) => r.id),
     );
-
-  if (date) {
-    query = query.where("date", "=", date);
-  }
 
   if (dateRange) {
     if (dateRange.start) {

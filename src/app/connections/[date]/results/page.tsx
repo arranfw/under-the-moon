@@ -43,7 +43,10 @@ const Page = async ({ params }: { params: { date: string } }) => {
   const results = session?.user?.id
     ? await getConnectionsResults({
         userId: session?.user.id,
-        date: params.date,
+        dateRange: {
+          start: params.date,
+          end: params.date,
+        },
         orderBy: {
           column: "score",
           dir: "desc",

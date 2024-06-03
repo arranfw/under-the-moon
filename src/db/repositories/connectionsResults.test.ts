@@ -54,6 +54,45 @@ describe("connectionsResults repository", () => {
       ]);
     });
 
+    it("returns results for a specific date", async () => {
+      const now = LocalDate.now();
+      const user = await createUser(userFactory.build());
+
+      await createConnectionsResult(
+        connectionsResultsFactory.build({
+          userId: user.id,
+          date: now.minusDays(1).toJSON(),
+        }),
+      );
+      await createConnectionsResult(
+        connectionsResultsFactory.build({
+          userId: user.id,
+          date: now.minusDays(2).toJSON(),
+        }),
+      );
+      await createConnectionsResult(
+        connectionsResultsFactory.build({
+          userId: user.id,
+          date: now.minusDays(3).toJSON(),
+        }),
+      );
+
+      const results = await getConnectionsResults({
+        userId: user.id,
+        dateRange: {
+          start: now.minusDays(2).toJSON(),
+          end: now.minusDays(2).toJSON(),
+        },
+      });
+      expect(results).toHaveLength(1);
+      expect(results).toEqual([
+        expect.objectContaining({
+          userId: user.id,
+          date: now.minusDays(2).toJSON(),
+        }),
+      ]);
+    });
+
     it("returns results filtered by dateRange", async () => {
       const now = LocalDate.now();
       const user = await createUser(userFactory.build());

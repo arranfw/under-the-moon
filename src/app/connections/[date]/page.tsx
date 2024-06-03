@@ -24,27 +24,51 @@ import Link from "next/link";
 
 const Connections = async ({ params }: { params: { date: string } }) => {
   const session = await auth();
-  const date =
-    typeof params.date === "string"
-      ? LocalDate.parse(params.date)
-      : LocalDate.now();
-  const todayString = date.format(dayMonthYearFormatter);
 
-  const gameData = await getConnectionsData(date);
+  const date =
+    typeof params.date === "string" ? LocalDate.parse(params.date) : null;
+  const todayString = date?.format(dayMonthYearFormatter);
+
+  const gameData = date ? await getConnectionsData(date) : null;
   const userResult = session?.user?.id
     ? (
         await getConnectionsResults({
-          date: params.date,
+          dateRange: {
+            start: params.date,
+            end: params.date,
+          },
           userId: session.user.id,
         })
       )[0]
     : null;
+
+  console.log("userResult params", {
+    servernow: LocalDate.now().toJSON(),
+    jodadate: LocalDate.parse(params.date),
+    jodadatestring: LocalDate.parse(params.date).toJSON(),
+    paramsdate: params.date,
+    date: date,
+    datestring: date?.toJSON(),
+    userId: session?.user?.id,
+    userResult,
+  });
 
   if (!gameData) {
     return (
       <div className="w-full h-56 grid place-content-center text-xl">
         Not released yet!
       </div>
+    );
+  }
+
+  if (!date) {
+    return (
+      <>
+        <div className="w-full h-56 grid place-content-center text-xl">
+          Error! Something date-param related is broken :\
+        </div>
+        <pre>{JSON.stringify(params)}</pre>
+      </>
     );
   }
 
