@@ -12,6 +12,7 @@ import { Inter } from "next/font/google";
 
 import "./globals.css";
 
+import { hasRecentChanges } from "./changelog/page";
 import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -58,7 +59,14 @@ export default async function RootLayout({
         </main>
         <footer className="backdrop-blur-lg backdrop-brightness-105 grid w-full px-2 py-1 border-t border border-border">
           <div className="place-self-end">
-            <Link href="/changelog">Changelog</Link>
+            <Link href="/changelog">
+              Changelog{" "}
+              {hasRecentChanges && (
+                <span className="rounded-full bg-green-300 dark:bg-green-700 px-2 py-1 text-xs">
+                  New
+                </span>
+              )}
+            </Link>
           </div>
         </footer>
       </body>

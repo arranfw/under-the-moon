@@ -60,6 +60,10 @@ const ChangeSectionHeader: React.FC<React.PropsWithChildren> = ({
   children,
 }) => <h3 className="text-lg font-bold">{children}</h3>;
 
+const LATEST_CHANGE_DATE = LocalDate.parse("2024-06-02");
+const now = LocalDate.now();
+export const hasRecentChanges = now.minusDays(7).isBefore(LATEST_CHANGE_DATE);
+
 interface PageProps {}
 
 const Page: React.FC<PageProps> = () => {

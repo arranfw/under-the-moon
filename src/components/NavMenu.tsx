@@ -2,6 +2,7 @@
 
 import React from "react";
 
+import { hasRecentChanges } from "@/app/changelog/page";
 import { cn } from "@/util";
 
 import { Divider } from "./Divider";
@@ -74,7 +75,7 @@ export const NavMenu: React.FC<NavMenuProps> = () => {
   return (
     <Drawer.Root direction="left">
       <Drawer.Trigger className="rounded-full flex p-2 relative">
-        <DrawerIcon notification />
+        <DrawerIcon notification={hasRecentChanges} />
       </Drawer.Trigger>
       <Drawer.Portal>
         <Drawer.Content
@@ -86,7 +87,7 @@ export const NavMenu: React.FC<NavMenuProps> = () => {
         >
           <div className="flex items-center justify-center gap-4">
             <Drawer.Close className="rounded-full flex p-2 relative">
-              <DrawerIcon notification />
+              <DrawerIcon notification={hasRecentChanges} />
             </Drawer.Close>
             <h1 className="font-semibold">Under the Moon</h1>
           </div>
@@ -125,9 +126,11 @@ export const NavMenu: React.FC<NavMenuProps> = () => {
                 label={
                   <>
                     Circles
-                    <span className="rounded-full bg-green-300 dark:bg-green-700 px-2 py-1 text-xs">
-                      New
-                    </span>
+                    {hasRecentChanges && (
+                      <span className="rounded-full bg-green-300 dark:bg-green-700 px-2 py-1 text-xs">
+                        New
+                      </span>
+                    )}
                   </>
                 }
               />
