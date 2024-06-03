@@ -40,6 +40,7 @@ const Page: React.FC<PageProps> = async () => {
           start: now.minusDays(resultDays).toJSON(),
           end: now.toJSON(),
         },
+        includeCircles: true,
       })
     : null;
   const resultCount = session?.user?.id

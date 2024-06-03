@@ -10,6 +10,7 @@ export const getConnectionsResults = async ({
   userId,
   orderBy,
   dateRange,
+  includeCircles,
 }: {
   userId: string;
   orderBy?: {
@@ -17,7 +18,7 @@ export const getConnectionsResults = async ({
     dir: OrderByDirection;
   };
   dateRange?: { start?: string; end?: string };
-  circleId?: string;
+  includeCircles?: boolean;
 }) => {
   const mutualUserCircles = await getMutualCircleUsers(userId);
 
@@ -25,12 +26,17 @@ export const getConnectionsResults = async ({
     .selectFrom("ConnectionsResults")
     .selectAll("ConnectionsResults")
     .leftJoin("User", "ConnectionsResults.userId", "User.id")
-    .select(["User.name", "User.image"])
-    .where(
+    .select(["User.name", "User.image"]);
+
+  if (includeCircles) {
+    query = query.where(
       "User.id",
       "in",
       mutualUserCircles.map((r) => r.id),
     );
+  } else {
+    query = query.where("ConnectionsResults.userId", "=", userId);
+  }
 
   if (dateRange) {
     if (dateRange.start) {

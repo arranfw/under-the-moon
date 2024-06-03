@@ -54,6 +54,39 @@ describe("connectionsResults repository", () => {
       ]);
     });
 
+    it("does not return results for other users by default", async () => {
+      const user1 = await createUser(userFactory.build());
+      const user2 = await createUser(userFactory.build());
+
+      const circle = await createCircle(circleFactory.build());
+      await addUserToCircle({ userId: user1.id, circleId: circle.id });
+      await addUserToCircle({ userId: user2.id, circleId: circle.id });
+
+      await createConnectionsResult(
+        connectionsResultsFactory.build({
+          userId: user1.id,
+          date: LocalDate.now().toJSON(),
+        }),
+      );
+
+      await createConnectionsResult(
+        connectionsResultsFactory.build({
+          userId: user2.id,
+          date: LocalDate.now().toJSON(),
+        }),
+      );
+
+      const results = await getConnectionsResults({
+        userId: user1.id,
+      });
+
+      expect(results).toEqual([
+        expect.objectContaining({
+          userId: user1.id,
+        }),
+      ]);
+    });
+
     it("returns results for a specific date", async () => {
       const now = LocalDate.now();
       const user = await createUser(userFactory.build());
@@ -317,6 +350,7 @@ describe("connectionsResults repository", () => {
 
       const results = await getConnectionsResults({
         userId: user1.id,
+        includeCircles: true,
       });
 
       expect(results).toHaveLength(2);
@@ -364,6 +398,7 @@ describe("connectionsResults repository", () => {
 
       const results = await getConnectionsResults({
         userId: user1.id,
+        includeCircles: true,
       });
 
       expect(results).toHaveLength(2);

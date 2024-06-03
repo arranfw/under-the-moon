@@ -81,7 +81,7 @@ export const ConnectionsGame: React.FC<ConnectionsGameProps> = ({
 
   useEffect(() => {
     // pull game state from database if it exists, otherwise load from local storage
-    if (userResult && userResult.date === today.toJSON()) {
+    if (userResult) {
       gameDispatch({
         type: GameActionType.LOAD_STATE,
 

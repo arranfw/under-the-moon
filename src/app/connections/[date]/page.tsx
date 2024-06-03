@@ -42,17 +42,6 @@ const Connections = async ({ params }: { params: { date: string } }) => {
       )[0]
     : null;
 
-  console.log("userResult params", {
-    servernow: LocalDate.now().toJSON(),
-    jodadate: LocalDate.parse(params.date),
-    jodadatestring: LocalDate.parse(params.date).toJSON(),
-    paramsdate: params.date,
-    date: date,
-    datestring: date?.toJSON(),
-    userId: session?.user?.id,
-    userResult,
-  });
-
   if (!gameData) {
     return (
       <div className="w-full h-56 grid place-content-center text-xl">
