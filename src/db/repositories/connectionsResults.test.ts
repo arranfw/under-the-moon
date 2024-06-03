@@ -233,10 +233,16 @@ describe("connectionsResults repository", () => {
       const user3 = await createUser(userFactory.build());
       const circle1 = await createCircle(circleFactory.build());
       const circle2 = await createCircle(circleFactory.build());
+      const circle3 = await createCircle(circleFactory.build());
 
       await addUserToCircle({
         userId: user1.id,
         circleId: circle1.id,
+      });
+
+      await addUserToCircle({
+        userId: user1.id,
+        circleId: circle3.id,
       });
 
       await addUserToCircle({
@@ -275,12 +281,12 @@ describe("connectionsResults repository", () => {
       });
 
       expect(results).toHaveLength(2);
-      expect(results).toEqual([
-        expect.objectContaining({
-          userId: user1.id,
-        }),
+      expect(results).toIncludeAllMembers([
         expect.objectContaining({
           userId: user3.id,
+        }),
+        expect.objectContaining({
+          userId: user1.id,
         }),
       ]);
     });

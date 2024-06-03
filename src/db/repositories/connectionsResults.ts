@@ -28,6 +28,7 @@ export const getConnectionsResults = async ({
 
   let query = db
     .selectFrom("ConnectionsResults")
+    .distinctOn(["ConnectionsResults.userId", "ConnectionsResults.createdAt"])
     .selectAll("ConnectionsResults")
     .leftJoin("User", "ConnectionsResults.userId", "User.id")
     .fullJoin("CircleUsers", "ConnectionsResults.userId", "CircleUsers.userId")
@@ -62,8 +63,9 @@ export const getConnectionsResults = async ({
   }
 
   if (orderBy) {
-    query = query.orderBy(orderBy.column, orderBy.dir);
-    query = query.orderBy("createdAt", "asc");
+    query = query
+      .orderBy([`${orderBy.column} ${orderBy.dir}`, "createdAt asc"])
+      .distinctOn([orderBy.column]);
   }
 
   return query.execute();
