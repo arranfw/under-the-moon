@@ -2,6 +2,7 @@
 
 import { db } from "..";
 import { ConnectionsResults, NewConnectionsResults } from "../types";
+import { mutualCircleUsers } from "./circles";
 import { LocalDate } from "@js-joda/core";
 import { OrderByDirection } from "kysely/dist/cjs/parser/order-by-parser";
 
@@ -20,42 +21,18 @@ export const getConnectionsResults = async ({
   dateRange?: { start?: string; end?: string };
   circleId?: string;
 }) => {
-  const requestedCircles = await db
-    .selectFrom("CircleUsers")
-    .where("CircleUsers.userId", "=", userId)
-    .select("CircleUsers.circleId")
-    .execute();
+  const resultsInCircles = await mutualCircleUsers(userId);
 
   let query = db
     .selectFrom("ConnectionsResults")
-    .distinctOn(["ConnectionsResults.userId", "ConnectionsResults.createdAt"])
     .selectAll("ConnectionsResults")
     .leftJoin("User", "ConnectionsResults.userId", "User.id")
-    .fullJoin("CircleUsers", "ConnectionsResults.userId", "CircleUsers.userId")
-    .leftJoin("Circles", "Circles.id", "CircleUsers.circleId")
     .select(["User.name", "User.image"])
-    .select(["Circles.isSystem"]);
-
-  if (requestedCircles.length === 0) {
-    query = query.where((eb) =>
-      eb.or([
-        eb("ConnectionsResults.userId", "=", userId),
-        eb("Circles.isSystem", "=", true),
-      ]),
+    .where(
+      "User.id",
+      "in",
+      resultsInCircles.map((r) => r.id),
     );
-  } else {
-    query = query.where((eb) =>
-      eb.or([
-        eb("ConnectionsResults.userId", "=", userId),
-        eb("Circles.isSystem", "=", true),
-        eb(
-          "CircleUsers.circleId",
-          "in",
-          requestedCircles.map((c) => c.circleId),
-        ),
-      ]),
-    );
-  }
 
   if (date) {
     query = query.where("date", "=", date);
@@ -79,12 +56,15 @@ export const getConnectionsResults = async ({
   return query.execute();
 };
 
-export const getUserScoreAverages = ({
+export const getUserScoreAverages = async ({
+  userId,
   dateRange,
 }: {
+  userId: string;
   dateRange: { start: string; end: string };
-}) =>
-  db
+}) => {
+  const resultsInCircles = await mutualCircleUsers(userId);
+  return db
     .selectFrom("ConnectionsResults")
     .leftJoin("User", "ConnectionsResults.userId", "User.id")
     .select(({ fn }) => [
@@ -97,14 +77,23 @@ export const getUserScoreAverages = ({
     .orderBy("scoreAverage", "desc")
     .where("date", ">=", dateRange.start)
     .where("date", "<=", dateRange.end)
+    .where(
+      "User.id",
+      "in",
+      resultsInCircles.map((r) => r.id),
+    )
     .execute();
+};
 
-export const getUserResultCount = ({
+export const getUserResultCount = async ({
+  userId,
   dateRange,
 }: {
+  userId: string;
   dateRange: { start: string; end: string };
-}) =>
-  db
+}) => {
+  const resultsInCircles = await mutualCircleUsers(userId);
+  return db
     .selectFrom("ConnectionsResults")
     .leftJoin("User", "ConnectionsResults.userId", "User.id")
     .select(({ fn }) => [
@@ -117,7 +106,13 @@ export const getUserResultCount = ({
     .orderBy("count", "desc")
     .where("date", ">=", dateRange.start)
     .where("date", "<=", dateRange.end)
+    .where(
+      "User.id",
+      "in",
+      resultsInCircles.map((r) => r.id),
+    )
     .execute();
+};
 
 export const createConnectionsResult = async (
   connectionsResult: NewConnectionsResults,

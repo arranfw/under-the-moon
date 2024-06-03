@@ -38,6 +38,30 @@ export const getCircles = () =>
     .groupBy(["Circles.id", "createdByUserName", "createdByUserImage"])
     .execute();
 
+export const mutualCircleUsers = async (userId: string) => {
+  const requestedCircles = await getUserCircles(userId);
+
+  return db
+    .selectFrom("User")
+    .distinctOn(["User.id"])
+    .leftJoin("CircleUsers", "User.id", "CircleUsers.userId")
+    .leftJoin("Circles", "Circles.id", "CircleUsers.circleId")
+    .where((eb) =>
+      eb.or([
+        eb("Circles.isSystem", "=", true),
+        requestedCircles.length > 0
+          ? eb(
+              "CircleUsers.circleId",
+              "in",
+              requestedCircles.map((c) => c.circleId),
+            )
+          : eb("User.id", "=", userId),
+      ]),
+    )
+    .select("User.id")
+    .execute();
+};
+
 export const getCircle = async (circleId: string) =>
   db
     .selectFrom("Circles")

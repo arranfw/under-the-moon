@@ -3,12 +3,14 @@ import React from "react";
 import { auth } from "@/auth";
 import { Avatar } from "@/components/Avatar";
 import { Divider } from "@/components/Divider";
+import { Link } from "@/components/Link";
 import { Tooltip } from "@/components/ToolTip";
 import {
   getConnectionsResults,
   getUserResultCount,
   getUserScoreAverages,
 } from "@/db/repositories";
+import { getUserCircles } from "@/db/repositories/circles";
 import { cn, nameToFallbackText } from "@/util";
 
 import { ChronoField, LocalDate } from "@js-joda/core";
@@ -22,9 +24,14 @@ const Page: React.FC<PageProps> = async () => {
   const session = await auth();
   const now = LocalDate.now();
   const resultDays = 12;
+
+  const userCircles = session?.user?.id
+    ? await getUserCircles(session?.user?.id)
+    : null;
+
   const recentResults = session?.user?.id
     ? await getConnectionsResults({
-        userId: session?.user?.id,
+        userId: session.user.id,
         orderBy: {
           column: "score",
           dir: "desc",
@@ -34,18 +41,24 @@ const Page: React.FC<PageProps> = async () => {
         },
       })
     : null;
-  const resultCount = await getUserResultCount({
-    dateRange: {
-      start: now.minusDays(resultDays).toJSON(),
-      end: now.toJSON(),
-    },
-  });
-  const totalScores = await getUserScoreAverages({
-    dateRange: {
-      start: now.minusDays(resultDays).toJSON(),
-      end: now.toJSON(),
-    },
-  });
+  const resultCount = session?.user?.id
+    ? await getUserResultCount({
+        userId: session.user.id,
+        dateRange: {
+          start: now.minusDays(resultDays).toJSON(),
+          end: now.toJSON(),
+        },
+      })
+    : null;
+  const totalScores = session?.user?.id
+    ? await getUserScoreAverages({
+        userId: session.user.id,
+        dateRange: {
+          start: now.minusDays(resultDays).toJSON(),
+          end: now.toJSON(),
+        },
+      })
+    : null;
 
   const resultsForDay = (date: LocalDate) =>
     partition(
@@ -60,6 +73,14 @@ const Page: React.FC<PageProps> = async () => {
           Recent results <small>(Last 12 days)</small>
         </h2>
       </div>
+
+      {userCircles?.length === 0 && (
+        <div className="w-full">
+          <Link href={`/circles`}>Join a circle</Link> to see other player's
+          results
+        </div>
+      )}
+
       <div className="w-full flex">
         {times(resultDays, (i) => (
           <div
@@ -117,7 +138,7 @@ const Page: React.FC<PageProps> = async () => {
           Completed Puzzles <small>(Last 12 days)</small>
         </h2>
         <div className="flex flex-col items-start">
-          {resultCount.map((streak) => (
+          {resultCount?.map((streak) => (
             <div key={streak.name} className="flex gap-2">
               <p>{streak.count}</p>
               <p>{streak.name}</p>
@@ -133,7 +154,7 @@ const Page: React.FC<PageProps> = async () => {
           Player score averages <small>(Last 12 days)</small>
         </h2>
         <div className="flex flex-col items-start">
-          {totalScores.map((scoreTotal) => (
+          {totalScores?.map((scoreTotal) => (
             <div key={scoreTotal.name} className="flex gap-2">
               <p>{parseFloat(scoreTotal.scoreAverage).toFixed(1)}</p>
               <p>{scoreTotal.name}</p>
