@@ -14,7 +14,7 @@ import { usePathname } from "next/navigation";
 import { Drawer } from "vaul";
 
 interface NavItemProps {
-  label: string;
+  label: React.ReactNode;
   href: string;
   inset?: number;
 }
@@ -49,6 +49,23 @@ const NavItem: React.FC<NavItemProps> = ({ label, href, inset }) => {
   );
 };
 
+interface DrawerIconProps {
+  notification?: boolean;
+}
+
+const DrawerIcon: React.FC<DrawerIconProps> = ({ notification }) => (
+  <>
+    <FontAwesomeIcon className="h-4 w-4" icon={faBars} />
+    {notification && (
+      <FontAwesomeIcon
+        className="absolute top-1 right-1 text-green-500"
+        fontSize={10}
+        icon={faCircle}
+      />
+    )}
+  </>
+);
+
 interface NavMenuProps {}
 
 export const NavMenu: React.FC<NavMenuProps> = () => {
@@ -56,8 +73,8 @@ export const NavMenu: React.FC<NavMenuProps> = () => {
 
   return (
     <Drawer.Root direction="left">
-      <Drawer.Trigger className="rounded-full flex p-2">
-        <FontAwesomeIcon className="h-4 w-4" icon={faBars} />
+      <Drawer.Trigger className="rounded-full flex p-2 relative">
+        <DrawerIcon notification />
       </Drawer.Trigger>
       <Drawer.Portal>
         <Drawer.Content
@@ -68,8 +85,8 @@ export const NavMenu: React.FC<NavMenuProps> = () => {
           )}
         >
           <div className="flex items-center justify-center gap-4">
-            <Drawer.Close className="rounded-full flex p-2">
-              <FontAwesomeIcon className="h-4 w-4" icon={faBars} />
+            <Drawer.Close className="rounded-full flex p-2 relative">
+              <DrawerIcon notification />
             </Drawer.Close>
             <h1 className="font-semibold">Under the Moon</h1>
           </div>
@@ -95,15 +112,25 @@ export const NavMenu: React.FC<NavMenuProps> = () => {
 
               <Divider className="my-2" />
 
-              <NavItem href={`/pyho`} label="Pyho" />
+              {/* <NavItem href={`/pyho`} label="Pyho" />
 
               <Divider className="my-2" />
 
               <NavItem href={`/morrow`} label="Morrow" />
 
-              <Divider className="my-2" />
+              <Divider className="my-2" /> */}
 
-              <NavItem href={`/circles`} label="Circles" />
+              <NavItem
+                href={`/circles`}
+                label={
+                  <>
+                    Circles
+                    <span className="rounded-full bg-green-300 dark:bg-green-700 px-2 py-1 text-xs">
+                      New
+                    </span>
+                  </>
+                }
+              />
 
               <Divider className="my-2" />
 
