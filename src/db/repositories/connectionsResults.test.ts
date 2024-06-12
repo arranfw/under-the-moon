@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 import {
   circleFactory,
   connectionsResultsFactory,
@@ -11,7 +15,6 @@ import {
   getConnectionsResults,
 } from "./connectionsResults";
 import { createUser } from "./user";
-import { faker } from "@faker-js/faker";
 import { LocalDate } from "@js-joda/core";
 
 describe("connectionsResults repository", () => {

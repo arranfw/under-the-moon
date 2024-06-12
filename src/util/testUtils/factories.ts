@@ -1,10 +1,10 @@
-import { NewCircles, NewConnectionsResults, NewUser } from "@/db/types";
+import { NewCircles, NewConnectionsResults, NewUser, User } from "@/db/types";
 
 import { faker } from "@faker-js/faker";
 import { ZonedDateTime } from "@js-joda/core";
 import { Factory } from "rosie";
 
-export const userFactory = Factory.define<NewUser>("User").attrs({
+export const userFactory = Factory.define<User>("User").attrs({
   id: faker.string.uuid,
   email: faker.internet.email,
   name: faker.person.fullName,
