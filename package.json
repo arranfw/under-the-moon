@@ -12,7 +12,9 @@
     "typecheck": "tsc --noEmit",
     "migrate": "node -r ts-node/register ./src/db/migrations/index.ts",
     "migrate:local": "node -r ts-node/register --env-file=.env ./src/db/migrations/index.ts",
-    "migrate:local:test": "NODE_ENV=test node -r ts-node/register --env-file=.env  ./src/db/migrations/index.ts"
+    "migrate:local:test": "NODE_ENV=test node -r ts-node/register --env-file=.env  ./src/db/migrations/index.ts",
+    "seed:connectionsResults": "node -r ts-node/register --env-file=.env -r tsconfig-paths/register ./src/util/seeds/connectionsResults.ts",
+    "cleanup:circle": "node -r ts-node/register --env-file=.env -r tsconfig-paths/register ./src/util/seeds/cleanupCircle"
   },
   "dependencies": {
     "@auth/kysely-adapter": "^1.1.0",
@@ -47,6 +49,7 @@
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
     "@ianvs/prettier-plugin-sort-imports": "^4.2.1",
+    "@inquirer/prompts": "^5.0.5",
     "@testing-library/jest-dom": "^6.4.5",
     "@testing-library/react": "^15.0.7",
     "@types/jest": "^29.5.12",
@@ -67,6 +70,10 @@
     "tailwindcss": "^3.4.1",
     "ts-jest": "^29.1.4",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.5"
+  },
+  "resolutions": {
+    "string-width": "4.2.3"
   }
 }

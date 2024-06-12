@@ -1,9 +1,10 @@
 "use server";
 
 import { db } from "..";
-import { ConnectionsResults, NewConnectionsResults } from "../types";
+import { ConnectionsResults, Database, NewConnectionsResults } from "../types";
 import { mutualCircleUsers as getMutualCircleUsers } from "./circles";
 import { LocalDate } from "@js-joda/core";
+import { Transaction } from "kysely";
 import { OrderByDirection } from "kysely/dist/cjs/parser/order-by-parser";
 
 export const getConnectionsResults = async ({
@@ -117,9 +118,10 @@ export const getUserResultCount = async ({
 
 export const createConnectionsResult = async (
   connectionsResult: NewConnectionsResults,
+  trx?: Transaction<Database>,
 ) => {
   const lastResult = (
-    await db
+    await (trx ?? db)
       .selectFrom("ConnectionsResults")
       .selectAll("ConnectionsResults")
       .where("userId", "=", connectionsResult.userId)
@@ -141,7 +143,7 @@ export const createConnectionsResult = async (
     currentStreak = (lastResult.streak || 0) + 1;
   }
 
-  return db
+  return (trx ?? db)
     .insertInto("ConnectionsResults")
     .values({
       ...connectionsResult,

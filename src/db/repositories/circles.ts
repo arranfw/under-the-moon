@@ -1,8 +1,9 @@
 "use server";
 
 import { db } from "..";
-import { NewCircles } from "../types";
+import { Database, NewCircles } from "../types";
 import { getSingle } from "../utils";
+import { Transaction } from "kysely";
 import { jsonArrayFrom } from "kysely/helpers/postgres";
 
 export const getCircles = () =>
@@ -70,6 +71,25 @@ export const getCircle = async (circleId: string) =>
     .execute()
     .then(getSingle);
 
+export const getCircleUsers = async (
+  circleId: string,
+  trx?: Transaction<Database>,
+) =>
+  (trx ?? db)
+    .selectFrom("CircleUsers")
+    .leftJoin("User", "CircleUsers.userId", "User.id")
+    .where("CircleUsers.circleId", "=", circleId)
+    .selectAll("User")
+    .execute();
+
+export const deleteCircle = (circleId: string, trx?: Transaction<Database>) =>
+  (trx ?? db)
+    .deleteFrom("Circles")
+    .where("id", "=", circleId)
+    .returningAll()
+    .execute()
+    .then(getSingle);
+
 export const createCircle = async (values: NewCircles) =>
   (await db.insertInto("Circles").values(values).returningAll().execute())[0];
 
@@ -80,13 +100,17 @@ export const getUserCircles = (userId: string) =>
     .select("CircleUsers.circleId")
     .execute();
 
-export const addUserToCircle = ({
-  circleId,
-  userId,
-}: {
-  circleId: string;
-  userId: string;
-}) => db.insertInto("CircleUsers").values({ circleId, userId }).execute();
+export const addUserToCircle = (
+  {
+    circleId,
+    userId,
+  }: {
+    circleId: string;
+    userId: string;
+  },
+  trx?: Transaction<Database>,
+) =>
+  (trx ?? db).insertInto("CircleUsers").values({ circleId, userId }).execute();
 
 export const removeUserFromCircle = ({
   circleId,
