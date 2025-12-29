@@ -135,39 +135,31 @@ export const gameStateReducer = (
         };
       }
       case GameActionType.MARK_ITEM: {
-        if (action.payload.difficulty === null) {
+        const selectedItems = state.selected.includes(action.payload.label)
+          ? state.selected
+          : [action.payload.label];
+
+        const difficulty = action.payload.difficulty;
+
+        if (difficulty === null) {
           return {
             ...state,
             markedItems: state.markedItems?.filter(
-              (item) => item.label !== action.payload.label,
+              (item) => !selectedItems.includes(item.label),
             ),
-          };
-        }
-        if (
-          state.markedItems?.some((item) => item.label === action.payload.label)
-        ) {
-          return {
-            ...state,
-            markedItems: state.markedItems?.map((item) => {
-              if (item.label === action.payload.label) {
-                return {
-                  label: item.label,
-                  difficulty: action.payload.difficulty!,
-                };
-              }
-              return item;
-            }),
           };
         }
 
         return {
           ...state,
           markedItems: [
-            ...(state.markedItems || []),
-            {
-              label: action.payload.label,
-              difficulty: action.payload.difficulty,
-            },
+            ...(state.markedItems || [])?.filter(
+              (markedItem) => !selectedItems.includes(markedItem.label),
+            ), // filter existing marks that have been selected
+            ...selectedItems.map((label) => ({
+              label,
+              difficulty,
+            })), // re-add selected marks with new difficulty
           ],
         };
       }

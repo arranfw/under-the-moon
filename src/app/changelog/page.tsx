@@ -71,6 +71,16 @@ const Page: React.FC<PageProps> = () => {
     <div className="flex items-center flex-col gap-6 mb-6">
       <h1 className="text-4xl font-bold">What's new</h1>
       <div className="w-full">
+        <ChangeDay date={LocalDate.parse("2025-12-09")}>
+          <ChangeSectionHeader>Connections:</ChangeSectionHeader>
+          <ul>
+            <li>
+              <ChangeIndicator type="change" />
+              <Link href="/connections">Connections</Link> marking difficulty
+              now applies to all selected items, thanks Hannah!
+            </li>
+          </ul>
+        </ChangeDay>
         <ChangeDay date={LocalDate.parse("2024-06-02")}>
           <ChangeSectionHeader>Circles:</ChangeSectionHeader>
           <ul>
